@@ -2,6 +2,18 @@
 
 > 客商风控评分 + 审批工作流一体化系统
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Qing-Leee/customer-admission-system)
+
+## 在线体验
+
+部署完成后，将通过 Render 提供公网访问地址，支持多人同时访问。
+
+**一键部署步骤：**
+1. 点击上方「Deploy to Render」按钮
+2. 使用 GitHub 账号登录 Render
+3. 确认配置（render.yaml 已预设好），点击创建
+4. 等待 1-2 分钟构建完成，获取 `https://customer-admission-system.onrender.com` 公网地址
+
 ## 项目简介
 
 本系统为客商运营管理办法的落地实现，提供完整的客商准入管理流程，包括：
@@ -160,7 +172,30 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
               approved（审批通过，写入评分快照）
 ```
 
-## 生产部署
+## 云端部署
+
+### 方式一：Render 一键部署（推荐，免费）
+
+1. 点击 README 顶部「Deploy to Render」按钮
+2. 使用 GitHub 账号登录 Render（自动关联仓库）
+3. 确认配置，点击 **Create** 开始部署
+4. 1-2 分钟后获取公网地址：`https://customer-admission-system.onrender.com`
+
+> Render 免费版说明：15 分钟无访问会自动休眠，下次访问自动唤醒（约30秒）。
+
+### 方式二：Docker 部署
+
+```bash
+# 构建镜像
+docker build -t customer-admission-system .
+
+# 运行容器
+docker run -d -p 8000:8000 --name ca-system customer-admission-system
+
+# 访问 http://localhost:8000
+```
+
+### 方式三：生产环境部署
 
 1. 修改 `database.py` 中的数据库连接为 MySQL/PostgreSQL
 2. 执行 `migration_merchant.sql` 和 `migration_approval.sql` 建表
