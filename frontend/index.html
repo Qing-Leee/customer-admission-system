@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客商准入系统</title>
+<style>
+:root{--primary:#2563eb;--primary-dark:#1e40af;--bg:#f1f5f9;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.app{display:flex;min-height:100vh}
+/* Sidebar */
+.sidebar{width:230px;background:linear-gradient(180deg,#1e293b,#0f172a);color:#cbd5e1;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-header{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-header h1{font-size:18px;color:#fff;font-weight:600}
+.sidebar-header p{font-size:12px;color:#64748b;margin-top:4px}
+.nav{flex:1;padding:12px 0}
+.nav-item{padding:11px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;transition:.2s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav-item.active{background:rgba(37,99,235,.15);color:#fff;border-left-color:var(--primary)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08)}
+.role-select{width:100%;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);font-size:13px}
+.sidebar-footer label{font-size:11px;color:#64748b;display:block;margin-bottom:6px}
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--card);padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.topbar h2{font-size:17px;font-weight:600}
+.content{flex:1;padding:24px;overflow-y:auto}
+/* Cards */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.stat-card .label{font-size:13px;color:var(--muted);margin-bottom:8px}
+.stat-card .value{font-size:28px;font-weight:700}
+.stat-card .sub{font-size:12px;color:var(--muted);margin-top:4px}
+/* Table */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:2px solid var(--border);font-weight:600}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+tr:hover td{background:#f8fafc}
+/* Buttons */
+.btn{padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{opacity:.9}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{opacity:.9}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{background:#f8fafc}
+.btn-sm{padding:4px 10px;font-size:12px}
+/* Badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-orange{background:#ffedd5;color:#9a3412}
+.badge-gray{background:#f1f5f9;color:#475569}
+/* Forms */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+.form-group label .req{color:var(--red)}
+.form-control{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;outline:none;transition:.2s}
+.form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+textarea.form-control{min-height:70px;resize:vertical}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);width:600px;max-width:90vw;max-height:85vh;overflow-y:auto;padding:24px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-header h3{font-size:17px;font-weight:600}
+.modal-close{cursor:pointer;font-size:22px;color:var(--muted);background:none;border:none}
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;z-index:2000;animation:slideIn .3s}
+.toast-success{background:var(--green)}.toast-error{background:var(--red)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+/* Detail */
+.detail-section{margin-bottom:24px}
+.detail-section h4{font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.info-item{font-size:13px}.info-item .k{color:var(--muted)}.info-item .v{font-weight:500;margin-top:2px}
+.score-display{text-align:center;padding:20px}
+.score-display .score-num{font-size:42px;font-weight:700;color:var(--primary)}
+.score-display .score-rating{font-size:20px;font-weight:600;margin-top:4px}
+.dim-bar{margin-bottom:10px}.dim-bar .dim-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.dim-bar .bar{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.dim-bar .bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.toolbar .form-control{width:auto;min-width:160px}
+.pagination{display:flex;gap:8px;justify-content:center;margin-top:16px;align-items:center}
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:20px}
+.timeline-item::before{content:'';position:absolute;left:-21px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--primary)}
+.timeline-item.done::before{background:var(--green)}
+.timeline-item.rejected::before{background:var(--red)}
+.timeline-item.cancelled::before{background:var(--muted)}
+.timeline-item .ti-time{font-size:12px;color:var(--muted)}
+.timeline-item .ti-title{font-weight:600;font-size:14px;margin:2px 0}
+.timeline-item .ti-desc{font-size:13px;color:var(--muted)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar">
+<div class="sidebar-header"><h1>客商准入系统</h1><p>风控评分 + 审批工作流</p></div>
+<div class="nav" id="nav">
+<div class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>系统看板</div>
+<div class="nav-item" data-view="merchants"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>客商管理</div>
+<div class="nav-item" data-view="approval"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>审批工作流</div>
+<div class="nav-item" data-view="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>审批历史</div>
+</div>
+<div class="sidebar-footer">
+<label>当前角色</label>
+<select class="role-select" id="roleSelect">
+<option value="业务员小王">业务员（提交审批）</option>
+<option value="部门负责人">部门负责人（复核）</option>
+<option value="市场部审批人">市场部（会签）</option>
+<option value="法务部审批人">法务部（会签）</option>
+<option value="财务部审批人">财务部（会签）</option>
+<option value="公司领导">公司领导（终审）</option>
+</select>
+</div>
+</div>
+<div class="main">
+<div class="topbar"><h2 id="pageTitle">系统看板</h2><span style="color:var(--muted);font-size:13px" id="topRight"></span></div>
+<div class="content" id="content"></div>
+</div>
+</div>
+<div class="modal-overlay" id="modal"><div class="modal" id="modalContent"></div></div>
+<div id="toastContainer"></div>
+<script>
+const API='';
+let currentUser='业务员小王';
+const roleMap={'业务员小王':'业务员','部门负责人':'dept_head','市场部审批人':'market','法务部审批人':'compliance','财务部审批人':'finance','公司领导':'executive'};
+
+// ===== Utils =====
+function toast(msg,type='success'){const t=document.createElement('div');t.className='toast toast-'+type;t.textContent=msg;document.getElementById('toastContainer').appendChild(t);setTimeout(()=>t.remove(),3000)}
+async function api(method,path,params={},body){let url=API+path;const qp=new URLSearchParams(params);if([...qp].length)url+='?'+qp;const opt={method,headers:{}};if(body){opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(body)}try{const r=await fetch(url,opt);const d=await r.json();if(!r.ok)throw new Error(d.detail||d.error||JSON.stringify(d));return d}catch(e){throw e}}
+function fmt(v){if(v===null||v===undefined)return'-';return v}
+function statusBadge(s){const m={pending_dept:['部门复核','badge-blue'],parallel_signing:['并行会签','badge-orange'],final_signing:['终审中','badge-orange'],approved:['已通过','badge-green'],rejected:['已驳回','badge-red']};const[t,c]=m[s]||[s,'badge-gray'];return`<span class="badge ${c}">${t}</span>`}
+function ratingBadge(r){if(!r)return'<span class="badge badge-gray">未评级</span>';const m={AAA:'badge-green',AA:'badge-green',A:'badge-green',BBB:'badge-blue',BB:'badge-orange',B:'badge-orange',UNQUALIFIED:'badge-red'};return`<span class="badge ${m[r]||'badge-gray'}">${r}</span>`}
+
+// ===== Navigation =====
+document.getElementById('nav').addEventListener('click',e=>{const item=e.target.closest('.nav-item');if(!item)return;document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));item.classList.add('active');const v=item.dataset.view;document.getElementById('pageTitle').textContent={dashboard:'系统看板',merchants:'客商管理',approval:'审批工作流',history:'审批历史'}[v];render(v)});
+document.getElementById('roleSelect').addEventListener('change',e=>{currentUser=e.target.value;const v=document.querySelector('.nav-item.active').dataset.view;if(v==='approval'||v==='history')render(v)});
+
+function render(view){
+const c=document.getElementById('content');
+if(view==='dashboard')renderDashboard(c);
+else if(view==='merchants')renderMerchants(c);
+else if(view==='approval')renderApproval(c);
+else if(view==='history')renderHistory(c);
+}
+
+// ===== Dashboard =====
+async function renderDashboard(c){
+c.innerHTML='<div class="stats-grid" id="statsGrid"></div><div class="card"><div class="card-title">评级分布</div><div id="ratingDist"></div></div><div class="card"><div class="card-title">审批状态分布</div><div id="approvalDist"></div></div>';
+try{
+const d=await api('GET','/api/dashboard/stats');
+document.getElementById('statsGrid').innerHTML=`
+<div class="stat-card"><div class="label">客商总数</div><div class="value">${d.merchant_total}</div></div>
+<div class="stat-card"><div class="label">待办任务</div><div class="value" style="color:var(--orange)">${d.pending_tasks}</div></div>
+<div class="stat-card"><div class="label">已评级客商</div><div class="value" style="color:var(--green)">${d.scored_merchants}</div></div>
+<div class="stat-card"><div class="label">已通过审批</div><div class="value" style="color:var(--green)">${d.approval_status.approved||0}</div></div>`;
+const rd=d.rating_distribution||{};
+document.getElementById('ratingDist').innerHTML=Object.keys(rd).length?`<div class="dim-bar">${Object.entries(rd).map(([r,n])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>${ratingBadge(r)}</span><span style="font-weight:600">${n} 家</span></div>`).join('')}</div>`:'<div class="empty">暂无评级数据</div>';
+const as=d.approval_status||{};
+const labels={pending_dept:'部门复核',parallel_signing:'并行会签',final_signing:'终审中',approved:'已通过',rejected:'已驳回'};
+document.getElementById('approvalDist').innerHTML=Object.keys(as).length?Object.entries(as).map(([s,n])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>${statusBadge(s)}</span><span style="font-weight:600">${n} 单</span></div>`).join(''):'<div class="empty">暂无审批数据</div>';
+}catch(e){c.innerHTML='<div class="empty">加载失败: '+e.message+'</div>'}
+}
+
+// ===== Merchants =====
+let merchantPage=1;
+async function renderMerchants(c){
+c.innerHTML=`<div class="toolbar"><input class="form-control" id="mkw" placeholder="搜索客商名称/信用代码"><select class="form-control" id="mRating"><option value="">全部评级</option><option>AAA</option><option>AA</option><option>A</option><option>BBB</option><option>BB</option><option>B</option></select><button class="btn btn-primary" onclick="loadMerchants()">搜索</button><button class="btn btn-success" onclick="showCreateModal()">+ 新建客商</button></div><div class="card"><table><thead><tr><th>ID</th><th>客商名称</th><th>统一信用代码</th><th>法人</th><th>评级</th><th>主联络人</th><th>建档时间</th><th>操作</th></tr></thead><tbody id="mTable"></tbody></table><div class="pagination" id="mPage"></div></div>`;
+loadMerchants();
+}
+async function loadMerchants(){
+const kw=document.getElementById('mkw').value;const rt=document.getElementById('mRating').value;
+try{const d=await api('GET','/api/merchant/list',{keyword:kw||undefined,rating:rt||undefined,page:merchantPage,page_size:10});
+document.getElementById('mTable').innerHTML=d.list.length?d.list.map(m=>`<tr><td>${m.merchant_id}</td><td style="cursor:pointer;color:var(--primary)" onclick="showDetail(${m.merchant_id})">${m.merchant_name}</td><td>${m.tax_number}</td><td>${fmt(m.legal_person)}</td><td>${ratingBadge(m.latest_rating)}</td><td>${fmt(m.primary_contact)}</td><td>${fmt(m.created_at)}</td><td><button class="btn btn-outline btn-sm" onclick="showDetail(${m.merchant_id})">详情</button> <button class="btn btn-primary btn-sm" onclick="submitApproval(${m.merchant_id})">提交审批</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">暂无数据</td></tr>';
+const tp=Math.ceil(d.total/10);
+document.getElementById('mPage').innerHTML=`<span style="color:var(--muted)">共 ${d.total} 条</span>${merchantPage>1?`<button class="btn btn-outline btn-sm" onclick="merchantPage--;loadMerchants()">上一页</button>`:''}<span>第 ${merchantPage}/${tp} 页</span>${merchantPage<tp?`<button class="btn btn-outline btn-sm" onclick="merchantPage++;loadMerchants()">下一页</button>`:''}`;
+}catch(e){toast(e.message,'error')}
+}
+
+// ===== Merchant Detail =====
+async function showDetail(id){
+const m=await api('GET','/api/merchant/detail',{merchant_id:id});
+const ap=await api('GET','/api/approval/status',{merchant_id:id}).catch(()=>({has_approval:false}));
+const bi=m.basic_info||{};
+const sc=m.latest_score||{};
+const dimColors={subject_quality:'#2563eb',financial:'#16a34a',project_quality:'#ea580c',performance_quality:'#7c3aed'};
+const dimNames={subject_quality:'主体资质',financial:'财务维度',project_quality:'立项质量',performance_quality:'履约质量'};
+const modal=document.getElementById('modal');const mc=document.getElementById('modalContent');
+mc.innerHTML=`<div class="modal-header"><h3>客商详情</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+<div class="detail-section"><h4>基础信息</h4><div class="info-grid">
+<div class="info-item"><div class="k">客商名称</div><div class="v">${fmt(bi.merchant_name)}</div></div>
+<div class="info-item"><div class="k">统一信用代码</div><div class="v">${fmt(bi.tax_number)}</div></div>
+<div class="info-item"><div class="k">法定代表人</div><div class="v">${fmt(bi.legal_person)}</div></div>
+<div class="info-item"><div class="k">实际控制人</div><div class="v">${fmt(bi.actual_controller)}</div></div>
+<div class="info-item"><div class="k">注册资金</div><div class="v">${bi.registered_capital?Number(bi.registered_capital).toLocaleString()+'元':'-'}</div></div>
+<div class="info-item"><div class="k">实缴资本</div><div class="v">${bi.paid_in_capital?Number(bi.paid_in_capital).toLocaleString()+'元':'-'}</div></div>
+<div class="info-item"><div class="k">成立日期</div><div class="v">${fmt(bi.establish_date)}</div></div>
+<div class="info-item"><div class="k">纳税完成度</div><div class="v">${fmt(bi.tax_completion_status)}%</div></div>
+<div class="info-item"><div class="k">涉诉总数</div><div class="v">${fmt(bi.lawsuit_total)}</div></div>
+<div class="info-item"><div class="k">被执行金额</div><div class="v">${bi.executed_amount?Number(bi.executed_amount).toLocaleString()+'元':'-'}</div></div>
+<div class="info-item"><div class="k">平均银行流水</div><div class="v">${bi.avg_bank_flow?Number(bi.avg_bank_flow).toLocaleString()+'元':'-'}</div></div>
+<div class="info-item"><div class="k">审批状态</div><div class="v">${ap.has_approval?statusBadge(ap.order.status):'<span class="badge badge-gray">未提交</span>'}</div></div>
+</div></div>
+${sc.total_score?`<div class="detail-section"><h4>评分结果</h4><div class="score-display"><div class="score-num">${sc.total_score}</div><div class="score-rating">${ratingBadge(sc.rating)}</div><div style="color:var(--muted);font-size:12px;margin-top:4px">${fmt(sc.score_time)}</div></div></div>`:''}
+${m.contacts&&m.contacts.length?`<div class="detail-section"><h4>对接人信息</h4><table><thead><tr><th>姓名</th><th>职务</th><th>电话</th><th>邮箱</th><th>主联络人</th></tr></thead><tbody>${m.contacts.map(c=>`<tr><td>${c.name}</td><td>${fmt(c.position)}</td><td>${fmt(c.phone)}</td><td>${fmt(c.email)}</td><td>${c.is_primary?'<span class="badge badge-green">是</span>':'否'}</td></tr>`).join('')}</tbody></table></div>`:''}
+${m.financial_records&&m.financial_records.length?`<div class="detail-section"><h4>财务数据</h4><table><thead><tr><th>年度</th><th>季度</th><th>总资产</th><th>总负债</th><th>营收</th><th>净利润</th></tr></thead><tbody>${m.financial_records.map(f=>`<tr><td>${f.period_year}</td><td>${f.period_quarter||'年度'}</td><td>${f.total_asset?Number(f.total_asset).toLocaleString():'-'}</td><td>${f.total_liability?Number(f.total_liability).toLocaleString():'-'}</td><td>${f.revenue?Number(f.revenue).toLocaleString():'-'}</td><td>${f.net_profit?Number(f.net_profit).toLocaleString():'-'}</td></tr>`).join('')}</tbody></table></div>`:''}
+<div style="display:flex;gap:8px;margin-top:16px">
+<button class="btn btn-primary" onclick="closeModal();showFinancialModal(${id})">录入财务数据</button>
+<button class="btn btn-success" onclick="closeModal();submitApproval(${id})">提交审批</button>
+</div>`;
+modal.classList.add('show');
+}
+
+// ===== Create Merchant =====
+function showCreateModal(){
+const modal=document.getElementById('modal');const mc=document.getElementById('modalContent');
+mc.innerHTML=`<div class="modal-header"><h3>新建客商</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+<div class="form-grid">
+<div class="form-group"><label>客商名称 <span class="req">*</span></label><input class="form-control" id="cName"></div>
+<div class="form-group"><label>统一信用代码 <span class="req">*</span></label><input class="form-control" id="cTax" placeholder="18位数字+大写字母" maxlength="18"></div>
+<div class="form-group"><label>法定代表人 <span class="req">*</span></label><input class="form-control" id="cLegal"></div>
+<div class="form-group"><label>实际控制人</label><input class="form-control" id="cController"></div>
+<div class="form-group"><label>注册资金(元)</label><input class="form-control" id="cRegCap" type="number"></div>
+<div class="form-group"><label>实缴资本(元)</label><input class="form-control" id="cPaidCap" type="number"></div>
+<div class="form-group"><label>成立日期</label><input class="form-control" id="cDate" type="date"></div>
+<div class="form-group"><label>纳税完成度(0-100)</label><input class="form-control" id="cTax2" type="number" min="0" max="100"></div>
+<div class="form-group"><label>注册地址</label><input class="form-control" id="cAddr"></div>
+<div class="form-group"><label>涉诉总数</label><input class="form-control" id="cLawsuit" type="number" value="0"></div>
+</div>
+<h4 style="margin:16px 0 8px">主联络人</h4>
+<div class="form-grid">
+<div class="form-group"><label>姓名 <span class="req">*</span></label><input class="form-control" id="ccName"></div>
+<div class="form-group"><label>职务</label><input class="form-control" id="ccPos"></div>
+<div class="form-group"><label>电话</label><input class="form-control" id="ccPhone"></div>
+<div class="form-group"><label>邮箱</label><input class="form-control" id="ccEmail"></div>
+</div>
+<div style="margin-top:16px"><button class="btn btn-primary" onclick="createMerchant()">创建客商</button> <button class="btn btn-outline" onclick="closeModal()">取消</button></div>`;
+modal.classList.add('show');
+}
+async function createMerchant(){
+const tax=document.getElementById('cTax').value;
+if(!/^[0-9A-Z]{15,18}$/.test(tax)){toast('统一信用代码应为15-18位数字+大写字母','error');return}
+const body={merchant_name:document.getElementById('cName').value,tax_number:tax,legal_person:document.getElementById('cLegal').value,actual_controller:document.getElementById('cController').value||undefined,registered_capital:parseFloat(document.getElementById('cRegCap').value)||undefined,paid_in_capital:parseFloat(document.getElementById('cPaidCap').value)||undefined,establish_date:document.getElementById('cDate').value||undefined,tax_completion_status:parseInt(document.getElementById('cTax2').value)||undefined,registered_address:document.getElementById('cAddr').value||undefined,lawsuit_total:parseInt(document.getElementById('cLawsuit').value)||0,contacts:[{name:document.getElementById('ccName').value,position:document.getElementById('ccPos').value||undefined,phone:document.getElementById('ccPhone').value||undefined,email:document.getElementById('ccEmail').value||undefined,is_primary:true}]};
+try{const r=await api('POST','/api/merchant',{},body);toast('客商创建成功，ID: '+r.merchant_id);closeModal();loadMerchants()}catch(e){toast(e.message,'error')}
+}
+
+// ===== Financial Data =====
+function showFinancialModal(merchantId){
+const modal=document.getElementById('modal');const mc=document.getElementById('modalContent');
+mc.innerHTML=`<div class="modal-header"><h3>录入财务数据 — 客商ID: ${merchantId}</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+<div class="form-grid">
+<div class="form-group"><label>会计年度 <span class="req">*</span></label><input class="form-control" id="fYear" type="number" value="2024" min="2000"></div>
+<div class="form-group"><label>季度(1-4，空为年度)</label><input class="form-control" id="fQ" type="number" min="1" max="4"></div>
+<div class="form-group"><label>总资产</label><input class="form-control" id="fTA" type="number"></div>
+<div class="form-group"><label>总负债</label><input class="form-control" id="fTL" type="number"></div>
+<div class="form-group"><label>流动资产</label><input class="form-control" id="fCA" type="number"></div>
+<div class="form-group"><label>流动负债</label><input class="form-control" id="fCL" type="number"></div>
+<div class="form-group"><label>营业收入</label><input class="form-control" id="fRev" type="number"></div>
+<div class="form-group"><label>净利润</label><input class="form-control" id="fNP" type="number"></div>
+<div class="form-group"><label>存货</label><input class="form-control" id="fInv" type="number"></div>
+<div class="form-group"><label>预付款</label><input class="form-control" id="fPre" type="number"></div>
+<div class="form-group"><label>经营现金流</label><input class="form-control" id="fOCF" type="number"></div>
+<div class="form-group"><label>净资产</label><input class="form-control" id="fNA" type="number"></div>
+</div>
+<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveFinancial(${merchantId})">保存</button> <button class="btn btn-outline" onclick="closeModal()">取消</button></div>`;
+modal.classList.add('show');
+}
+async function saveFinancial(mid){
+const body={period_year:parseInt(document.getElementById('fYear').value),period_quarter:document.getElementById('fQ').value?parseInt(document.getElementById('fQ').value):null,total_asset:parseFloat(document.getElementById('fTA').value)||undefined,total_liability:parseFloat(document.getElementById('fTL').value)||undefined,current_asset:parseFloat(document.getElementById('fCA').value)||undefined,current_liability:parseFloat(document.getElementById('fCL').value)||undefined,revenue:parseFloat(document.getElementById('fRev').value)||undefined,net_profit:parseFloat(document.getElementById('fNP').value)||undefined,inventory:parseFloat(document.getElementById('fInv').value)||undefined,prepay:parseFloat(document.getElementById('fPre').value)||undefined,operating_cash_flow:parseFloat(document.getElementById('fOCF').value)||undefined,net_asset:parseFloat(document.getElementById('fNA').value)||undefined};
+try{const r=await api('POST','/api/financial/single',{merchant_id:mid},body);toast('财务数据保存成功，影响 '+r.rows_affected+' 行');closeModal()}catch(e){toast(e.message,'error')}
+}
+
+// ===== Approval =====
+async function submitApproval(merchantId){
+if(!confirm('确认提交客商'+merchantId+'的准入审批？'))return;
+try{const r=await api('POST','/api/approval/submit',{applicant:currentUser},{merchant_id:merchantId,remark:'准入审批申请'});toast(r.message+' | 评分:'+r.total_score+' '+r.rating);const v=document.querySelector('.nav-item.active').dataset.view;if(v==='dashboard')renderDashboard(document.getElementById('content'))}catch(e){toast(e.message,'error')}
+}
+async function renderApproval(c){
+const role=roleMap[currentUser]||'';
+c.innerHTML=`<div class="card"><div class="card-title">我的待办任务 <span style="font-size:13px;color:var(--muted);font-weight:400">当前角色: ${currentUser}</span></div><table><thead><tr><th>任务ID</th><th>客商</th><th>申请人</th><th>角色</th><th>当前步骤</th><th>评分</th><th>评级</th><th>操作</th></tr></thead><tbody id="tTable"></tbody></table><div class="pagination" id="tPage"></div></div>`;
+try{const d=await api('GET','/api/approval/my-tasks',{assignee:currentUser,role_type:role||undefined,page:1,page_size:50});
+const roleNames={dept_head:'部门负责人',market:'市场部',compliance:'法务部',finance:'财务部',executive:'公司领导'};
+document.getElementById('tTable').innerHTML=d.list.length?d.list.map(t=>`<tr><td>${t.task_id}</td><td style="cursor:pointer;color:var(--primary)" onclick="closeModal();showApprovalHistory(${t.order_id})">${t.merchant_name}</td><td>${fmt(t.applicant)}</td><td>${roleNames[t.role_type]||t.role_type}</td><td>${statusBadge(t.order_status)}</td><td>${t.total_score||'-'}</td><td>${ratingBadge(t.rating)}</td><td><button class="btn btn-success btn-sm" onclick="doApprove(${t.task_id})">通过</button> <button class="btn btn-danger btn-sm" onclick="doReject(${t.task_id})">驳回</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">暂无待办任务</td></tr>';
+}catch(e){toast(e.message,'error')}
+}
+async function doApprove(taskId){
+const comment=prompt('审批意见（通过）:','同意')||'';if(comment===null)return;
+try{const r=await api('POST','/api/approval/task/approve',{assignee:currentUser},{task_id:taskId,comment});toast(r.message);renderApproval(document.getElementById('content'))}catch(e){toast(e.message,'error')}
+}
+async function doReject(taskId){
+const comment=prompt('驳回意见:','')||'';if(comment===null)return;
+try{const r=await api('POST','/api/approval/task/reject',{assignee:currentUser},{task_id:taskId,comment});toast(r.message);renderApproval(document.getElementById('content'))}catch(e){toast(e.message,'error')}
+}
+
+// ===== History =====
+async function renderHistory(c){
+c.innerHTML=`<div class="card"><div class="card-title">审批单查询</div><div class="toolbar"><input class="form-control" id="hOrderId" type="number" placeholder="输入审批单ID" style="min-width:200px"><button class="btn btn-primary" onclick="loadHistory()">查询</button></div><div id="hContent"><div class="empty">请输入审批单ID查询审批历史</div></div></div>`;
+}
+async function loadHistory(){
+const oid=parseInt(document.getElementById('hOrderId').value);if(!oid){toast('请输入审批单ID','error');return}
+showApprovalHistory(oid);
+}
+async function showApprovalHistory(orderId){
+const r=await api('GET','/api/approval/history',{order_id:orderId});
+const o=r.order||{};const sc=r.score||{};
+const roleNames={dept_head:'部门负责人',market:'市场部',compliance:'法务部',finance:'财务部',executive:'公司领导'};
+const statusNames={pending:'待处理',done:'已完成',cancelled:'已取消'};
+const actionNames={approve:'通过',reject:'驳回'};
+const dimNames={subject_quality:'主体资质',financial:'财务维度',project_quality:'立项质量',performance_quality:'履约质量'};
+const dimColors={subject_quality:'#2563eb',financial:'#16a34a',project_quality:'#ea580c',performance_quality:'#7c3aed'};
+const modal=document.getElementById('modal');const mc=document.getElementById('modalContent');
+mc.innerHTML=`<div class="modal-header"><h3>审批历史 — 单号 #${o.id}</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+<div class="detail-section"><h4>审批信息</h4><div class="info-grid">
+<div class="info-item"><div class="k">客商</div><div class="v">${(r.merchant||{}).merchant_name||'-'}</div></div>
+<div class="info-item"><div class="k">申请人</div><div class="v">${fmt(o.applicant)}</div></div>
+<div class="info-item"><div class="k">申请时间</div><div class="v">${fmt(o.apply_time)}</div></div>
+<div class="info-item"><div class="k">状态</div><div class="v">${statusBadge(o.status)}</div></div>
+<div class="info-item"><div class="k">评分</div><div class="v">${sc.total_score||'-'} ${ratingBadge(sc.rating)}</div></div>
+<div class="info-item"><div class="k">备注</div><div class="v">${fmt(o.remark)}</div></div>
+</div></div>
+${sc.dimension_scores?`<div class="detail-section"><h4>维度得分</h4>${Object.entries(sc.dimension_scores).map(([k,v])=>`<div class="dim-bar"><div class="dim-label"><span>${dimNames[k]||k}</span><span>${v}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.min(v,100)}%;background:${dimColors[k]||'#2563eb'}"></div></div></div>`).join('')}</div>`:''}
+<div class="detail-section"><h4>审批流程</h4><div class="timeline">${(r.tasks||[]).map(t=>`<div class="timeline-item ${t.task_status}"><div class="ti-time">${fmt(t.created_at)}</div><div class="ti-title">${roleNames[t.role_type]||t.role_type} — ${statusNames[t.task_status]||t.task_status} ${t.action?'('+actionNames[t.action]+')':''}</div><div class="ti-desc">处理人: ${fmt(t.assignee)} | ${t.comment?'意见: '+t.comment:'无意见'} ${t.handled_at?'| 处理时间: '+t.handled_at:''}</div></div>`).join('')}</div></div>`;
+modal.classList.add('show');
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+// Init
+renderDashboard(document.getElementById('content'));
+</script>
+</body>
+</html>
