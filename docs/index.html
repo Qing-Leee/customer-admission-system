@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>客商准入系统</title>
+<title>客商准入评级系统 - 运营中台</title>
 <style>
 :root{--primary:#2563eb;--primary-dark:#1e40af;--bg:#f1f5f9;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.08)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -13,15 +13,12 @@ body{font-family:'Segoe UI','Microsoft YaHei',sans-serif;background:var(--bg);co
 .sidebar-header{padding:20px;border-bottom:1px solid rgba(255,255,255,.1)}
 .sidebar-header h1{font-size:18px;font-weight:700}
 .sidebar-header p{font-size:12px;color:#94a3b8;margin-top:4px}
-.nav{flex:1;padding:12px 0}
+.nav{flex:1;padding:12px 0;overflow-y:auto}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;color:#94a3b8;transition:all .2s;font-size:14px}
 .nav-item:hover{background:rgba(255,255,255,.05);color:#fff}
 .nav-item.active{background:var(--primary);color:#fff}
 .nav-item svg{width:18px;height:18px;flex-shrink:0}
-.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
-.sidebar-footer label{font-size:11px;color:#94a3b8;display:block;margin-bottom:6px}
-.role-select{width:100%;padding:8px 10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;font-size:13px;cursor:pointer}
-.role-select option{background:#1e293b;color:#fff}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:#94a3b8}
 .main{flex:1;margin-left:240px;padding:24px}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .topbar h2{font-size:20px;font-weight:700}
@@ -31,12 +28,13 @@ body{font-family:'Segoe UI','Microsoft YaHei',sans-serif;background:var(--bg);co
 .badge-red{background:#fee2e2;color:#991b1b}
 .badge-orange{background:#fed7aa;color:#9a3412}
 .badge-gray{background:#e2e8f0;color:#475569}
+.badge-purple{background:#ede9fe;color:#5b21b6}
 .content{display:none}
 .content.active{display:block}
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
 .card-header h3{font-size:15px;font-weight:600}
-.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-primary:hover{background:var(--primary-dark)}
 .btn-success{background:var(--green);color:#fff}
@@ -46,6 +44,8 @@ body{font-family:'Segoe UI','Microsoft YaHei',sans-serif;background:var(--bg);co
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
 .btn-outline:hover{background:var(--bg)}
+.btn-warning{background:var(--orange);color:#fff}
+.btn-warning:hover{background:#c2410c}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
 td{padding:10px 12px;border-bottom:1px solid var(--border)}
@@ -60,22 +60,12 @@ tr:hover{background:#f8fafc}
 .form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:#fff}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:1000;justify-content:center;align-items:center}
 .modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:12px;padding:24px;width:600px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal{background:#fff;border-radius:12px;padding:24px;width:680px;max-width:90vw;max-height:85vh;overflow-y:auto}
 .modal h3{font-size:18px;font-weight:700;margin-bottom:16px}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-.timeline{list-style:none;padding:0}
-.timeline-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.timeline-item:last-child{border-bottom:none}
-.timeline-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0}
-.timeline-dot.done{background:var(--green)}
-.timeline-dot.pending{background:var(--orange)}
-.timeline-dot.cancelled{background:var(--muted)}
-.timeline-content{flex:1}
-.timeline-content .role{font-weight:600;font-size:13px}
-.timeline-content .comment{font-size:12px;color:var(--muted);margin-top:2px}
-.timeline-content .time{font-size:11px;color:var(--muted)}
 .toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;font-size:13px;font-weight:500;z-index:2000;animation:slideIn .3s ease}
 .toast.success{background:var(--green)}
 .toast.error{background:var(--red)}
@@ -90,44 +80,73 @@ tr:hover{background:#f8fafc}
 .score-BB{background:#fef3c7;color:#92400e}
 .score-B{background:#fed7aa;color:#9a3412}
 .score-UNQUALIFIED{background:#fee2e2;color:#991b1b}
-.rating-bar{display:flex;gap:4px;margin-top:8px}
-.rating-bar div{flex:1;height:6px;border-radius:3px;background:var(--border)}
-.rating-bar div.fill{background:var(--primary)}
-.dimension-score{display:flex;align-items:center;gap:8px}
+.dimension-score{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .dimension-score .name{width:100px;font-size:12px;color:var(--muted)}
 .dimension-score .bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
-.dimension-score .bar div{height:100%;background:var(--primary);border-radius:4px}
+.dimension-score .bar div{height:100%;border-radius:4px}
 .dimension-score .val{width:50px;text-align:right;font-size:13px;font-weight:600}
+/* Toggle switch */
+.toggle{position:relative;display:inline-block;width:44px;height:24px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:24px}
+.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+.toggle input:checked+.toggle-slider{background:var(--primary)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(20px)}
+.toggle-label{display:flex;align-items:center;gap:8px;font-size:13px}
+/* Import area */
+.import-area{border:2px dashed var(--border);border-radius:8px;padding:24px;text-align:center;margin-bottom:12px;transition:all .2s}
+.import-area:hover{border-color:var(--primary);background:#eff6ff}
+.import-area.dragover{border-color:var(--primary);background:#dbeafe}
+.import-area p{color:var(--muted);margin:8px 0}
+.import-textarea{width:100%;height:120px;font-family:monospace;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:6px;resize:vertical}
+/* Level badge */
+.level-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.level-strategic{background:#ede9fe;color:#5b21b6}
+.level-core{background:#dbeafe;color:#1e40af}
+.level-standard{background:#dcfce7;color:#166534}
+.level-other{background:#e2e8f0;color:#475569}
+/* Filter bar */
+.filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter-bar select,.filter-bar input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px}
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.info-item{display:flex;flex-direction:column}
+.info-item .lbl{font-size:11px;color:var(--muted);margin-bottom:2px}
+.info-item .val{font-size:14px;font-weight:500}
+/* Progress bar for scoring */
+.score-progress{margin:8px 0}
+.score-progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.score-progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-progress-bar div{height:100%;border-radius:3px;transition:width .3s}
+/* Tab styles */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 16px;cursor:pointer;font-size:13px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.tab:hover{color:var(--primary)}
 </style>
 </head>
 <body>
 <div class="app">
 <div class="sidebar">
-<div class="sidebar-header"><h1>客商准入系统</h1><p>风控评分 + 审批工作流</p></div>
+<div class="sidebar-header"><h1>客商准入评级系统</h1><p>运营中台 · 风控评分</p></div>
 <div class="nav" id="nav">
 <div class="nav-item active" data-view="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>系统看板</div>
 <div class="nav-item" data-view="merchants"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>客商管理</div>
-<div class="nav-item" data-view="approval"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>审批工作流</div>
-<div class="nav-item" data-view="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>审批历史</div>
+<div class="nav-item" data-view="financial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>财务数据</div>
+<div class="nav-item" data-view="project"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>立项质量</div>
+<div class="nav-item" data-view="performance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>履约质量</div>
+<div class="nav-item" data-view="pool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>客商池看板</div>
 </div>
-<div class="sidebar-footer">
-<label>当前角色</label>
-<select class="role-select" id="roleSelect">
-<option value="业务员小王">业务员（提交审批）</option>
-<option value="部门负责人">部门负责人（复核）</option>
-<option value="市场部审批人">市场部（会签）</option>
-<option value="法务部审批人">法务部（会签）</option>
-<option value="财务部审批人">财务部（会签）</option>
-<option value="公司领导">公司领导（终审）</option>
-</select>
-</div>
+<div class="sidebar-footer">运营中台用户 · 单角色模式<br>数据按附件规则自动评级</div>
 </div>
 <div class="main">
-<div class="topbar"><h2 id="pageTitle">系统看板</h2><span id="topBadge" class="badge badge-blue"></span></div>
+<div class="topbar"><h2 id="pageTitle">系统看板</h2><span id="topBadge" class="badge badge-blue">运营中台</span></div>
 <div class="content active" id="view-dashboard"></div>
 <div class="content" id="view-merchants"></div>
-<div class="content" id="view-approval"></div>
-<div class="content" id="view-history"></div>
+<div class="content" id="view-financial"></div>
+<div class="content" id="view-project"></div>
+<div class="content" id="view-performance"></div>
+<div class="content" id="view-pool"></div>
 </div>
 </div>
 <div class="modal-overlay" id="modal"><div class="modal" id="modalContent"></div></div>
@@ -135,812 +154,1638 @@ tr:hover{background:#f8fafc}
 
 <script>
 // ======================================================================
-// 评分引擎 — 纯前端实现（完全还原后端 Python 逻辑）
+// 评分引擎 — 按附件2《客商综合评估标准》实现
+// 支持阶梯计分(accumulate)、阶梯扣分(deduct)、固定得分(fixed)
 // ======================================================================
 
-// --- 维度规则 ---
-const ALL_DIMENSIONS=['subject_quality','financial','project_quality','performance_quality'];
-const DIMENSION_MAP={
-  'FIRST|false':['subject_quality'],
-  'FIRST|true':['subject_quality','financial','project_quality'],
-  'DYNAMIC|false':['subject_quality','performance_quality'],
-  'DYNAMIC|true':['subject_quality','financial','performance_quality']
-};
-function activeDimensions(scenario,isCredit){
-  return DIMENSION_MAP[scenario+'|'+isCredit]||[];
-}
-
-// --- 评级映射 ---
-const RATING_THRESHOLDS=[
-  [90,null,'AAA',0.50],[80,90,'AA',0.70],[70,80,'A',0.85],
-  [60,70,'BBB',1.00],[50,60,'BB',1.20],[40,50,'B',1.50],[0,40,'UNQUALIFIED',2.00]
-];
-function mapRating(totalScore){
-  let s=Number(totalScore)||0;
-  for(let [lo,hi,r,co] of RATING_THRESHOLDS){
-    if(hi===null&&s>=lo)return[r,co];
-    if(lo<=s&&s<hi)return[r,co];
+// --- 阶梯评分核心函数 ---
+function scoreTiered(value, segments) {
+  if (value === null || value === undefined || isNaN(value)) return 0;
+  for (let seg of segments) {
+    let upper = seg.upper === null ? Infinity : seg.upper;
+    if (seg.lower <= value && value < upper) {
+      if (seg.type === 'fixed') return seg.base_score;
+      let units = (value - seg.lower) / seg.unit_value;
+      if (seg.type === 'deduct') {
+        return Math.max(0, Math.round((seg.base_score - units * seg.unit_score) * 100) / 100);
+      }
+      return Math.min(seg.max_score, Math.round((seg.base_score + units * seg.unit_score) * 100) / 100);
+    }
   }
-  return['UNQUALIFIED',2.00];
+  return 0;
 }
 
 // --- 安全除法 ---
-function safeDiv(a,b){return b===0?0:a/b;}
+function safeDiv(a, b) { return (!b || b === 0) ? 0 : a / b; }
 
-// --- 财务比率计算 ---
-function computeRatios(d){
-  let ta=+(d.total_asset||0),tl=+(d.total_liability||0),ca=+(d.current_asset||0);
-  let cl=+(d.current_liability||0),rev=+(d.revenue||0),np=+(d.net_profit||0);
-  let inv=+(d.inventory||0),pp=+(d.prepay||0),ocf=+(d.operating_cash_flow||0),na=+(d.net_asset||0);
-  return{
-    asset_liability_ratio:safeDiv(tl,ta),
-    quick_ratio:safeDiv(ca-inv-pp,cl),
-    cash_flow_ratio:safeDiv(ocf,cl),
-    net_profit_margin:safeDiv(np,rev),
-    roe:safeDiv(np,na),
-    asset_turnover_ratio:safeDiv(rev,ta),
-    capital_operation_capability:safeDiv(na,ta)
-  };
-}
-
-// --- 指标值解析 ---
-function resolveIndicator(code,ctx){
-  const{ratios,project_quality:pq,performance:perf,profile:p}=ctx;
-  // 主体资质
-  const subCodes={registered_capital:1,paid_in_ratio:1,establish_years:1,tax_completion:1,defendant_ratio:1,executed_ratio:1,executed_amount_ratio:1,bank_flow_ratio:1};
-  if(subCodes[code]){
-    if(!p)return null;
-    switch(code){
-      case'registered_capital':return+p.registered_capital;
-      case'paid_in_ratio':return p.registered_capital==0?0:+p.paid_in_capital/+p.registered_capital;
-      case'establish_years':{let y=parseInt((p.establish_date||'').substring(0,4));return isNaN(y)?null:new Date().getFullYear()-y;}
-      case'tax_completion':return+p.tax_completion_status;
-      case'defendant_ratio':return+p.defendant_count/Math.max(+p.lawsuit_total,1);
-      case'executed_ratio':return+p.executed_count/Math.max(+p.lawsuit_total,1);
-      case'executed_amount_ratio':return+p.executed_amount/Math.max(+p.paid_in_capital,1);
-      case'bank_flow_ratio':return+p.avg_bank_flow/Math.max(+p.avg_approved_fund,1);
-    }
-  }
-  // 财务
-  const finMap={asset_liability_ratio:'asset_liability_ratio',quick_ratio:'quick_ratio',cash_flow_ratio:'cash_flow_ratio',net_profit_margin:'net_profit_margin',roe:'roe',asset_turnover_ratio:'asset_turnover_ratio',capital_operation:'capital_operation_capability'};
-  if(finMap[code]){return ratios?+(ratios[finMap[code]]??0):null;}
-  // 立项质量
-  const projMap={avg_gross_margin:'avg_gross_margin',price_volatility:'price_volatility',contract_terms_score:'contract_terms_score',legal_opinion_score:'legal_opinion_adoption',warehouse_control_score:'warehouse_control_score',logistics_track_score:'logistics_track_score'};
-  if(projMap[code]){return pq?+(pq[projMap[code]]??0):null;}
-  // 履约质量
-  if(perf){
-    switch(code){
-      case'annual_gross_margin':return+perf.annual_gross_margin;
-      case'annual_revenue':return+perf.annual_revenue;
-      case'immediate_overdue_rate':return+perf.immediate_overdue_project_count/Math.max(+perf.total_project_count,1);
-      case'overdue_60days_rate':return+perf.overdue_60days_batch_count/Math.max(+perf.total_batch_count,1);
-      case'recovery_rate':return+perf.recovered_amount/Math.max(+perf.historical_overdue_amount,1);
-      case'tax_declaration_consistency':return+perf.tax_declaration_diff;
-    }
-  }
-  return null;
-}
-
-// --- 阶梯计分 ---
-function scoreIndicator(value,segments){
-  if(value===null||value===undefined)return 0;
-  let matched=null;
-  for(let seg of segments){
-    let upper=seg.upper_limit===null?Infinity:seg.upper_limit;
-    if(seg.lower_limit<=value&&value<upper){matched=seg;break;}
-  }
-  if(!matched)return 0;
-  if(matched.unit_value===0||matched.unit_value===null)return 0;
-  let unitCount=(value-matched.lower_limit)/matched.unit_value;
-  let rawScore=unitCount*matched.unit_score;
-  return Math.min(rawScore,matched.max_score);
-}
-
-function scoreDimension(indicatorValues,indicatorSegments,active){
-  if(!active)return 0;
-  let total=0;
-  for(let code in indicatorSegments){
-    let segs=indicatorSegments[code];
-    let val=indicatorValues[code];
-    let score=scoreIndicator(val,segs);
-    let weight=segs[0]?segs[0].weight_in_parent:0;
-    total+=score*weight;
-  }
-  return total;
-}
-
-// --- 维度权重配置 ---
-const WEIGHT_CONFIG={subject_quality:0.25,financial:0.30,project_quality:0.20,performance_quality:0.25};
-
-// --- 指标阶梯配置（完全还原 seed_data.py）---
-const INDICATOR_CONFIG={
-  subject_quality:{
-    registered_capital:[{lower_limit:0,upper_limit:null,unit_value:50000,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    paid_in_ratio:[{lower_limit:0,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    establish_years:[{lower_limit:0,upper_limit:null,unit_value:0.1,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    tax_completion:[{lower_limit:0,upper_limit:null,unit_value:1,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    defendant_ratio:[{lower_limit:-1,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    executed_ratio:[{lower_limit:-1,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    executed_amount_ratio:[{lower_limit:-1,upper_limit:null,unit_value:1,unit_score:1,max_score:100,weight_in_parent:0.125}],
-    bank_flow_ratio:[{lower_limit:0,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.125}]
+// --- 主体资质指标评分规则 (25%) ---
+const RULES_SUBJECT = {
+  registered_capital: {
+    weight: 0.50 * 0.60, // 资本金50% × 注册资本60% = 30%
+    segments: [
+      {lower:0, upper:10000000, unit_value:1000000, unit_score:2, base_score:0, max_score:20, type:'accumulate'},
+      {lower:10000000, upper:30000000, unit_value:1000000, unit_score:1.5, base_score:20, max_score:50, type:'accumulate'},
+      {lower:30000000, upper:50000000, unit_value:1000000, unit_score:1, base_score:50, max_score:70, type:'accumulate'},
+      {lower:50000000, upper:null, unit_value:1000000, unit_score:0.5, base_score:70, max_score:100, type:'accumulate'}
+    ]
   },
-  financial:{
-    asset_liability_ratio:[{lower_limit:-1,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1429}],
-    quick_ratio:[{lower_limit:0,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1429}],
-    cash_flow_ratio:[{lower_limit:0,upper_limit:null,unit_value:0.005,unit_score:1,max_score:100,weight_in_parent:0.1429}],
-    net_profit_margin:[{lower_limit:0,upper_limit:null,unit_value:0.001,unit_score:1,max_score:100,weight_in_parent:0.1429}],
-    roe:[{lower_limit:0,upper_limit:null,unit_value:0.001,unit_score:1,max_score:100,weight_in_parent:0.1429}],
-    asset_turnover_ratio:[{lower_limit:0,upper_limit:null,unit_value:0.005,unit_score:1,max_score:100,weight_in_parent:0.1429}],
-    capital_operation:[{lower_limit:0,upper_limit:null,unit_value:0.005,unit_score:1,max_score:100,weight_in_parent:0.1429}]
+  paid_in_ratio: {
+    weight: 0.50 * 0.40, // 资本金50% × 实缴比例40% = 20%
+    segments: [
+      {lower:0, upper:0.50, unit_value:0.01, unit_score:0.4, base_score:0, max_score:20, type:'accumulate'},
+      {lower:0.50, upper:0.75, unit_value:0.01, unit_score:1.6, base_score:20, max_score:60, type:'accumulate'},
+      {lower:0.75, upper:0.90, unit_value:0.01, unit_score:2, base_score:60, max_score:90, type:'accumulate'},
+      {lower:0.90, upper:1.01, unit_value:0.01, unit_score:1, base_score:90, max_score:100, type:'accumulate'}
+    ]
   },
-  project_quality:{
-    avg_gross_margin:[{lower_limit:0,upper_limit:null,unit_value:0.001,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    price_volatility:[{lower_limit:-1,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    contract_terms_score:[{lower_limit:0,upper_limit:null,unit_value:0.5,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    legal_opinion_score:[{lower_limit:0,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    warehouse_control_score:[{lower_limit:0,upper_limit:null,unit_value:0.5,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    logistics_track_score:[{lower_limit:0,upper_limit:null,unit_value:0.5,unit_score:1,max_score:100,weight_in_parent:0.1667}]
+  establish_years: {
+    weight: 0.10,
+    segments: [
+      {lower:0, upper:2, unit_value:1, unit_score:5, base_score:0, max_score:10, type:'accumulate'},
+      {lower:2, upper:5, unit_value:1, unit_score:8, base_score:10, max_score:34, type:'accumulate'},
+      {lower:5, upper:10, unit_value:1, unit_score:10, base_score:34, max_score:84, type:'accumulate'},
+      {lower:10, upper:null, unit_value:1, unit_score:3, base_score:84, max_score:100, type:'accumulate'}
+    ]
   },
-  performance_quality:{
-    annual_gross_margin:[{lower_limit:0,upper_limit:null,unit_value:0.001,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    annual_revenue:[{lower_limit:0,upper_limit:null,unit_value:100000,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    immediate_overdue_rate:[{lower_limit:-1,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    overdue_60days_rate:[{lower_limit:-1,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    recovery_rate:[{lower_limit:0,upper_limit:null,unit_value:0.01,unit_score:1,max_score:100,weight_in_parent:0.1667}],
-    tax_declaration_consistency:[{lower_limit:-1,upper_limit:null,unit_value:1,unit_score:1,max_score:100,weight_in_parent:0.1667}]
+  tax_completion: {
+    weight: 0.40 * 0.40, // 资信情况40% × 不欠税证明40% = 16%
+    segments: [
+      {lower:0, upper:101, unit_value:1, unit_score:1, base_score:0, max_score:100, type:'accumulate'}
+    ]
+  },
+  lawsuit_score: {
+    weight: 0.40 * 0.60, // 资信情况40% × 涉诉60% = 24%
+    custom: true
   }
 };
 
-// --- 评分引擎核心 ---
-function calculateScore(merchantId){
-  let db=getDB();
-  let merchant=db.merchants.find(m=>m.merchant_id===merchantId);
-  if(!merchant)throw new Error('客商不存在');
-  
-  let profile={
-    registered_capital:merchant.registered_capital,
-    paid_in_capital:merchant.paid_in_capital,
-    establish_date:merchant.establish_date,
-    tax_completion_status:merchant.tax_completion_status,
-    lawsuit_total:merchant.lawsuit_total,
-    defendant_count:merchant.defendant_count,
-    executed_count:merchant.executed_count,
-    executed_amount:merchant.executed_amount,
-    avg_bank_flow:merchant.avg_bank_flow,
-    avg_approved_fund:merchant.avg_approved_fund
+// --- 财务情况指标评分规则 (30%) ---
+const RULES_FINANCIAL = {
+  asset_liability_ratio: {
+    weight: 0.30 * 0.40, // 偿债能力30% × 资产负债率40% = 12%
+    segments: [
+      {lower:0, upper:0.40, unit_value:0.01, unit_score:0.5, base_score:100, type:'deduct'},
+      {lower:0.40, upper:0.60, unit_value:0.01, unit_score:2, base_score:80, type:'deduct'},
+      {lower:0.60, upper:0.80, unit_value:0.01, unit_score:1, base_score:40, type:'deduct'},
+      {lower:0.80, upper:null, unit_value:0.01, unit_score:0.5, base_score:20, type:'deduct'}
+    ]
+  },
+  quick_ratio: {
+    weight: 0.30 * 0.30, // 偿债能力30% × 速动比率30% = 9%
+    deviation: true, // 基于|速动比率-90%|计分
+    segments: [
+      {lower:0, upper:0.10, unit_value:0.01, unit_score:1, base_score:100, type:'deduct'},
+      {lower:0.10, upper:0.30, unit_value:0.01, unit_score:1.5, base_score:90, type:'deduct'},
+      {lower:0.30, upper:0.60, unit_value:0.01, unit_score:1, base_score:60, type:'deduct'},
+      {lower:0.60, upper:null, unit_value:0.01, unit_score:1.5, base_score:45, type:'deduct'}
+    ]
+  },
+  cash_flow_ratio: {
+    weight: 0.30 * 0.30, // 偿债能力30% × 现金流量比率30% = 9%
+    segments: [
+      {lower:0, upper:0.30, unit_value:0.01, unit_score:0.5, base_score:0, max_score:15, type:'accumulate'},
+      {lower:0.30, upper:0.50, unit_value:0.01, unit_score:2, base_score:15, max_score:55, type:'accumulate'},
+      {lower:0.50, upper:1.00, unit_value:0.01, unit_score:0.8, base_score:55, max_score:95, type:'accumulate'},
+      {lower:1.00, upper:null, unit_value:0.01, unit_score:1, base_score:95, max_score:100, type:'accumulate'}
+    ]
+  },
+  net_profit_margin: {
+    weight: 0.30 * 0.35, // 盈利能力30% × 销售净利率35% = 10.5%
+    segments: [
+      {lower:0, upper:0.03, unit_value:0.01, unit_score:5, base_score:0, max_score:15, type:'accumulate'},
+      {lower:0.03, upper:0.09, unit_value:0.01, unit_score:10, base_score:15, max_score:75, type:'accumulate'},
+      {lower:0.09, upper:0.14, unit_value:0.01, unit_score:3, base_score:75, max_score:90, type:'accumulate'},
+      {lower:0.14, upper:null, unit_value:0.01, unit_score:1, base_score:90, max_score:100, type:'accumulate'}
+    ]
+  },
+  roe: {
+    weight: 0.30 * 0.35, // 盈利能力30% × 净资产收益率35% = 10.5%
+    segments: [
+      {lower:0, upper:0.03, unit_value:0.01, unit_score:5, base_score:0, max_score:15, type:'accumulate'},
+      {lower:0.03, upper:0.13, unit_value:0.01, unit_score:4.5, base_score:15, max_score:60, type:'accumulate'},
+      {lower:0.13, upper:0.18, unit_value:0.01, unit_score:6, base_score:60, max_score:90, type:'accumulate'},
+      {lower:0.18, upper:null, unit_value:0.01, unit_score:2, base_score:90, max_score:100, type:'accumulate'}
+    ]
+  },
+  cash_flow_net_margin: {
+    weight: 0.30 * 0.30, // 盈利能力30% × 现金流净利率30% = 9%
+    segments: [
+      {lower:0, upper:0.40, unit_value:0.01, unit_score:0.5, base_score:0, max_score:20, type:'accumulate'},
+      {lower:0.40, upper:0.80, unit_value:0.01, unit_score:1, base_score:20, max_score:60, type:'accumulate'},
+      {lower:0.80, upper:1.00, unit_value:0.01, unit_score:1.5, base_score:60, max_score:90, type:'accumulate'},
+      {lower:1.00, upper:null, unit_value:0.01, unit_score:0.5, base_score:90, max_score:100, type:'accumulate'}
+    ]
+  },
+  asset_turnover: {
+    weight: 0.40 * 0.50, // 经营能力40% × 资产周转率50% = 20%
+    segments: [
+      {lower:0, upper:0.4, unit_value:0.1, unit_score:5, base_score:0, max_score:20, type:'accumulate'},
+      {lower:0.4, upper:0.9, unit_value:0.1, unit_score:8, base_score:20, max_score:60, type:'accumulate'},
+      {lower:0.9, upper:1.5, unit_value:0.1, unit_score:5, base_score:60, max_score:90, type:'accumulate'},
+      {lower:1.5, upper:null, unit_value:0.1, unit_score:2.5, base_score:90, max_score:100, type:'accumulate'}
+    ]
+  },
+  capital_operation: {
+    weight: 0.40 * 0.50, // 经营能力40% × 资本运作能力50% = 20%
+    segments: [
+      {lower:0, upper:0.10, unit_value:0.01, unit_score:2, base_score:0, max_score:20, type:'accumulate'},
+      {lower:0.10, upper:0.25, unit_value:0.01, unit_score:3, base_score:20, max_score:65, type:'accumulate'},
+      {lower:0.25, upper:0.30, unit_value:0.01, unit_score:5, base_score:65, max_score:90, type:'accumulate'},
+      {lower:0.30, upper:null, unit_value:0.01, unit_score:1, base_score:90, max_score:100, type:'accumulate'}
+    ]
+  }
+};
+
+// --- 立项质量指标评分规则 (45%) ---
+const RULES_PROJECT = {
+  estimated_revenue: {
+    weight: 0.60 * 0.45, // 项目收益60% × 预计营收45% = 27%
+    segments: [
+      {lower:0, upper:5000000, unit_value:1000000, unit_score:2, base_score:0, max_score:10, type:'accumulate'},
+      {lower:5000000, upper:10000000, unit_value:1000000, unit_score:3, base_score:10, max_score:25, type:'accumulate'},
+      {lower:10000000, upper:30000000, unit_value:1000000, unit_score:2.5, base_score:25, max_score:75, type:'accumulate'},
+      {lower:30000000, upper:null, unit_value:10000000, unit_score:10, base_score:75, max_score:100, type:'accumulate'}
+    ]
+  },
+  project_profit_rate: {
+    weight: 0.60 * 0.30, // 项目收益60% × 项目利润30% = 18%
+    segments: [
+      {lower:-1, upper:0.03, unit_value:0.001, unit_score:0, base_score:0, max_score:0, type:'accumulate'},
+      {lower:0.03, upper:0.045, unit_value:0.001, unit_score:2, base_score:0, max_score:30, type:'accumulate'},
+      {lower:0.045, upper:0.07, unit_value:0.001, unit_score:1.6, base_score:30, max_score:70, type:'accumulate'},
+      {lower:0.07, upper:null, unit_value:0.001, unit_score:1, base_score:70, max_score:100, type:'accumulate'}
+    ]
+  },
+  project_turnover: {
+    weight: 0.60 * 0.25, // 项目收益60% × 项目周转25% = 15%
+    segments: [
+      {lower:0, upper:3, unit_value:1, unit_score:13, base_score:0, max_score:39, type:'accumulate'},
+      {lower:3, upper:6, unit_value:1, unit_score:7, base_score:39, max_score:60, type:'accumulate'},
+      {lower:6, upper:9, unit_value:1, unit_score:10, base_score:60, max_score:90, type:'accumulate'},
+      {lower:9, upper:null, unit_value:1, unit_score:1, base_score:90, max_score:100, type:'accumulate'}
+    ]
+  },
+  market_condition: {
+    weight: 0.40 * 0.10, // 项目风险40% × 市场行情10% = 4%
+    segments: [
+      {lower:0, upper:1, unit_value:1, unit_score:0, base_score:60, type:'fixed'}, // 无参考
+      {lower:1, upper:2, unit_value:1, unit_score:0, base_score:80, type:'fixed'}, // 波动
+      {lower:2, upper:3, unit_value:1, unit_score:0, base_score:100, type:'fixed'} // 平稳
+    ]
+  },
+  product_category: {
+    weight: 0.40 * 0.10, // 项目风险40% × 品类属性10% = 4%
+    segments: [
+      {lower:0, upper:1, unit_value:1, unit_score:0, base_score:100, type:'fixed'}, // 传统品类
+      {lower:1, upper:2, unit_value:1, unit_score:0, base_score:80, type:'fixed'} // 新兴品类
+    ]
+  },
+  sales_cycle: {
+    weight: 0.40 * 0.20, // 项目风险40% × 销售周期权重(平均20%) = 8%
+    segments: [
+      {lower:0, upper:5, unit_value:1, unit_score:0.6, base_score:100, type:'deduct'},
+      {lower:5, upper:40, unit_value:1, unit_score:0.8, base_score:97, type:'deduct'},
+      {lower:40, upper:70, unit_value:1, unit_score:1, base_score:69, type:'deduct'},
+      {lower:70, upper:null, unit_value:1, unit_score:1.2, base_score:39, type:'deduct'}
+    ]
+  },
+  contract_terms: {
+    weight: 0.40 * 0.20, // 项目风险40% × 合同文本权重(平均20%) = 8%
+    segments: [
+      {lower:0, upper:1, unit_value:1, unit_score:0, base_score:100, type:'fixed'},
+      {lower:1, upper:2, unit_value:1, unit_score:0, base_score:80, type:'fixed'},
+      {lower:2, upper:3, unit_value:1, unit_score:0, base_score:60, type:'fixed'}
+    ]
+  },
+  warehouse_control: {
+    weight: 0.40 * 0.20, // 项目风险40% × 货权控制权重(平均20%) = 8%
+    segments: [
+      {lower:0, upper:1, unit_value:1, unit_score:0, base_score:100, type:'fixed'},
+      {lower:1, upper:2, unit_value:1, unit_score:0, base_score:80, type:'fixed'},
+      {lower:2, upper:3, unit_value:1, unit_score:0, base_score:60, type:'fixed'}
+    ]
+  }
+};
+
+// --- 履约质量指标评分规则 (45%) ---
+const RULES_PERFORMANCE = {
+  annual_revenue: {
+    weight: 0.40 * 0.50, // 年度情况40% × 年度营收50% = 20%
+    segments: [
+      {lower:0, upper:3000000, unit_value:1000000, unit_score:0.5, base_score:0, max_score:15, type:'accumulate'},
+      {lower:3000000, upper:5000000, unit_value:1000000, unit_score:1, base_score:15, max_score:35, type:'accumulate'},
+      {lower:5000000, upper:10000000, unit_value:1000000, unit_score:0.5, base_score:35, max_score:60, type:'accumulate'},
+      {lower:10000000, upper:null, unit_value:100000000, unit_score:10, base_score:60, max_score:100, type:'accumulate'}
+    ]
+  },
+  overdue_scale: {
+    weight: 0.40 * 0.50, // 年度情况40% × 逾期规模50% = 20%
+    segments: [
+      {lower:0, upper:null, unit_value:0.01, unit_score:1, base_score:100, type:'deduct'}
+    ]
+  },
+  first_overdue_rate: {
+    weight: 0.60 * 0.50, // 历史逾期60% × 首次逾期率50% = 30%
+    segments: [
+      {lower:0, upper:null, unit_value:0.01, unit_score:1, base_score:100, type:'deduct'}
+    ]
+  },
+  overdue_warning_rate: {
+    weight: 0.60 * 0.50, // 历史逾期60% × 逾期预警率50% = 30%
+    segments: [
+      {lower:0, upper:null, unit_value:0.01, unit_score:1, base_score:100, type:'deduct'}
+    ]
+  }
+};
+
+// --- 客商层级系数 ---
+const LEVEL_COEFFICIENTS = {
+  strategic: {name: '战略层', coefficient: 1.5, desc: '央企全资（二级公司及以上）/ 战略合作伙伴'},
+  core: {name: '核心层', coefficient: 1.3, desc: '央企控股、省属国企全资或绝对控股 / 中国500强 / 国有控股上市公司'},
+  standard: {name: '标准层', coefficient: 1.1, desc: '地方国企、上市公司三级及以上'},
+  other: {name: '其他', coefficient: 1.0, desc: '符合风控指引要求但非上述性质的企业类型'}
+};
+
+// --- 评级映射 ---
+const RATING_THRESHOLDS = [
+  [90, null, 'AAA', 0.50], [80, 90, 'AA', 0.70], [70, 80, 'A', 0.85],
+  [60, 70, 'BBB', 1.00], [50, 60, 'BB', 1.20], [40, 50, 'B', 1.50], [0, 40, 'UNQUALIFIED', 2.00]
+];
+
+function mapRating(totalScore) {
+  let s = Number(totalScore) || 0;
+  for (let [lo, hi, r, co] of RATING_THRESHOLDS) {
+    if (hi === null && s >= lo) return [r, co];
+    if (lo <= s && s < hi) return [r, co];
+  }
+  return ['UNQUALIFIED', 2.00];
+}
+
+// --- 涉诉评分（特殊计算） ---
+function scoreLawsuit(profile) {
+  let total = profile.lawsuit_total || 0;
+  if (total === 0) return 100;
+  let defendantRatio = (profile.defendant_count || 0) / total;
+  let executedRatio = (profile.executed_count || 0) / total;
+  let executedAmountRatio = (profile.executed_amount || 0) / Math.max(profile.paid_in_capital || 1, 1);
+  // 各子项从100分起扣，-1分/1%
+  let defendantScore = Math.max(0, 100 - defendantRatio * 100);
+  let executedCountScore = Math.max(0, 100 - executedRatio * 100);
+  let executedAmountScore = Math.max(0, 100 - executedAmountRatio * 100);
+  // 加权: 被告20% + 被执行数35% + 被执行金额45%
+  let score = defendantScore * 0.20 + executedCountScore * 0.35 + executedAmountScore * 0.45;
+  // 被告占比超60%额外扣10分
+  if (defendantRatio > 0.60) score -= 10;
+  return Math.max(0, Math.round(score * 100) / 100);
+}
+
+// --- 计算财务比率 ---
+function computeRatios(d) {
+  let ta = +(d.total_asset||0), tl = +(d.total_liability||0), ca = +(d.current_asset||0);
+  let cl = +(d.current_liability||0), rev = +(d.revenue||0), np = +(d.net_profit||0);
+  let inv = +(d.inventory||0), pp = +(d.prepay||0), ocf = +(d.operating_cash_flow||0), na = +(d.net_asset||0);
+  return {
+    asset_liability_ratio: safeDiv(tl, ta),
+    quick_ratio: safeDiv(ca - inv - pp, cl),
+    cash_flow_ratio: safeDiv(ocf, cl),
+    net_profit_margin: safeDiv(np, rev),
+    roe: safeDiv(np, na),
+    cash_flow_net_margin: safeDiv(ocf, np),
+    asset_turnover: safeDiv(rev, ta),
+    capital_operation: safeDiv(na, ta)
   };
-  
-  let finData=db.financial.filter(f=>f.merchant_id===merchantId)
-    .sort((a,b)=>b.period_year-a.period_year||b.period_quarter-a.period_quarter);
-  
-  let rawFin=null,ratios=null;
-  if(finData.length>0){
-    rawFin=finData[0];
-    ratios=computeRatios(rawFin);
-  }
-  
-  let isCredit=rawFin!==null;
-  let scenario=db.snapshots.some(s=>s.merchant_id===merchantId)?'DYNAMIC':'FIRST';
-  let activeDims=activeDimensions(scenario,isCredit);
-  
-  let projectQuality=null;
-  if(isCredit){
-    projectQuality={avg_gross_margin:0.30,price_volatility:0.15,contract_terms_score:80,legal_opinion_adoption:0.85,warehouse_control_score:75,logistics_track_score:80};
-  }
-  
-  let performance=null;
-  
-  let ctx={ratios,project_quality:projectQuality,performance:performance,profile};
-  
-  let dimScores={};
-  for(let dim of ALL_DIMENSIONS){
-    let active=activeDims.includes(dim);
-    let segs=INDICATOR_CONFIG[dim]||{};
-    let vals={};
-    for(let code in segs){vals[code]=resolveIndicator(code,ctx);}
-    dimScores[dim]=Math.round(scoreDimension(vals,segs,active)*100)/100;
-  }
-  
-  let totalScore=0;
-  for(let dim of activeDims){
-    totalScore+=dimScores[dim]*(WEIGHT_CONFIG[dim]||0);
-  }
-  totalScore=Math.round(totalScore*100)/100;
-  
-  let[rating,riskCo]=mapRating(totalScore);
-  let qualified=rating!=='UNQUALIFIED';
-  
-  return{merchant_id:merchantId,scenario,is_credit_applied:isCredit,
-    dimension_scores:dimScores,total_score:totalScore,rating,risk_coefficient:riskCo,qualified};
 }
 
-// ======================================================================
-// 审批工作流 — 纯前端实现
-// ======================================================================
-const STATUS={PENDING_DEPT:'pending_dept',PARALLEL:'parallel_signing',FINAL:'final_signing',APPROVED:'approved',REJECTED:'rejected'};
-const STEP_MAP={pending_dept:'部门负责人复核',parallel_signing:'市场/法务/财务并行会签',final_signing:'公司领导终审',approved:'审批通过',rejected:'审批驳回'};
-const PARALLEL_ROLES=['market','compliance','finance'];
-const ROLE_MAP={'业务员小王':'业务员','部门负责人':'dept_head','市场部审批人':'market','法务部审批人':'compliance','财务部审批人':'finance','公司领导':'executive'};
-const ROLE_LABELS={dept_head:'部门负责人',market:'市场部',compliance:'法务部',finance:'财务部',executive:'公司领导'};
-
-function submitApproval(merchantId,applicant,remark){
-  let db=getDB();
-  let active=db.orders.filter(o=>o.merchant_id===merchantId&&[STATUS.PENDING_DEPT,STATUS.PARALLEL,STATUS.FINAL].includes(o.status));
-  if(active.length>0)return{success:false,error:'该客商已有进行中的审批单，不可重复提交'};
-  
-  let result=calculateScore(merchantId);
-  if(!result.qualified)return{success:false,error:'评分不合格，不允许提交审批',total_score:result.total_score,rating:result.rating};
-  
-  let orderId=db.nextOrderId++;
-  let now=new Date().toLocaleString('zh-CN',{hour12:false});
-  db.orders.push({
-    id:orderId,merchant_id:merchantId,applicant,apply_time:now,
-    status:STATUS.PENDING_DEPT,current_step:STEP_MAP[STATUS.PENDING_DEPT],
-    total_score:result.total_score,rating:result.rating,
-    dimension_scores:JSON.stringify(result.dimension_scores),
-    remark:remark||'',updated_at:now
-  });
-  db.tasks.push({id:db.nextTaskId++,order_id:orderId,assignee:'部门负责人',role_type:'dept_head',action:null,comment:null,task_status:'pending',created_at:now});
-  saveDB(db);
-  return{success:true,order_id:orderId,total_score:result.total_score,rating:result.rating,message:'审批已提交，等待部门负责人复核'};
-}
-
-function approveTask(taskId,assignee,comment){
-  let db=getDB();
-  let task=db.tasks.find(t=>t.id===taskId);
-  if(!task)return{success:false,error:'任务不存在'};
-  if(task.assignee!==assignee)return{success:false,error:'任务归属不匹配，无权处理'};
-  if(task.task_status!=='pending')return{success:false,error:'任务当前状态为'+task.task_status+'，无法处理'};
-  
-  let order=db.orders.find(o=>o.id===task.order_id);
-  if(!order)return{success:false,error:'审批单不存在'};
-  let now=new Date().toLocaleString('zh-CN',{hour12:false});
-  task.action='approve';task.comment=comment||'';task.task_status='done';task.handled_at=now;
-  
-  if(task.role_type==='dept_head'){
-    order.status=STATUS.PARALLEL;order.current_step=STEP_MAP[STATUS.PARALLEL];order.updated_at=now;
-    db.tasks.push({id:db.nextTaskId++,order_id:order.id,assignee:'市场部审批人',role_type:'market',action:null,comment:null,task_status:'pending',created_at:now});
-    db.tasks.push({id:db.nextTaskId++,order_id:order.id,assignee:'法务部审批人',role_type:'compliance',action:null,comment:null,task_status:'pending',created_at:now});
-    db.tasks.push({id:db.nextTaskId++,order_id:order.id,assignee:'财务部审批人',role_type:'finance',action:null,comment:null,task_status:'pending',created_at:now});
-    saveDB(db);
-    return{success:true,order_id:order.id,message:'部门负责人复核通过，已进入市场/法务/财务并行会签'};
-  }
-  
-  if(PARALLEL_ROLES.includes(task.role_type)){
-    let parallelTasks=db.tasks.filter(t=>t.order_id===order.id&&PARALLEL_ROLES.includes(t.role_type));
-    let allDone=parallelTasks.every(t=>t.task_status==='done');
-    if(allDone){
-      order.status=STATUS.FINAL;order.current_step=STEP_MAP[STATUS.FINAL];order.updated_at=now;
-      db.tasks.push({id:db.nextTaskId++,order_id:order.id,assignee:'公司领导',role_type:'executive',action:null,comment:null,task_status:'pending',created_at:now});
-      saveDB(db);
-      return{success:true,order_id:order.id,all_parallel_done:true,message:'所有并行会签已通过，已进入公司领导终审'};
+// --- 维度评分 ---
+function scoreDimension(rules, values) {
+  let total = 0;
+  for (let code in rules) {
+    let rule = rules[code];
+    let val = values[code];
+    let score = 0;
+    if (rule.custom) {
+      score = rule === RULES_SUBJECT.lawsuit_score ? scoreLawsuit(values._profile || {}) : 0;
+    } else if (rule.deviation) {
+      // 速动比率: 基于|value - 90%|计分
+      let dev = Math.abs((val || 0) - 0.90);
+      score = scoreTiered(dev, rule.segments);
+    } else {
+      score = scoreTiered(val, rule.segments);
     }
-    saveDB(db);
-    return{success:true,order_id:order.id,all_parallel_done:false,message:ROLE_LABELS[task.role_type]+'会签通过，等待其他角色审批'};
+    total += score * rule.weight;
   }
-  
-  if(task.role_type==='executive'){
-    order.status=STATUS.APPROVED;order.current_step=STEP_MAP[STATUS.APPROVED];order.updated_at=now;
-    let result=calculateScore(order.merchant_id);
-    let snapshotId=db.nextSnapshotId++;
-    db.snapshots.push({id:snapshotId,merchant_id:order.merchant_id,total_score:result.total_score,rating:result.rating,risk_coefficient:result.risk_coefficient,scenario:result.scenario,created_at:now});
-    saveDB(db);
-    return{success:true,order_id:order.id,snapshot_id:snapshotId,total_score:result.total_score,rating:result.rating,message:'终审通过，评分快照已写入'};
-  }
-  saveDB(db);
-  return{success:true,order_id:order.id};
+  return Math.round(total * 100) / 100;
 }
 
-function rejectTask(taskId,assignee,comment){
-  let db=getDB();
-  let task=db.tasks.find(t=>t.id===taskId);
-  if(!task)return{success:false,error:'任务不存在'};
-  if(task.assignee!==assignee)return{success:false,error:'任务归属不匹配，无权处理'};
-  if(task.task_status!=='pending')return{success:false,error:'任务当前状态为'+task.task_status+'，无法处理'};
-  
-  let order=db.orders.find(o=>o.id===task.order_id);
-  if(!order)return{success:false,error:'审批单不存在'};
-  let now=new Date().toLocaleString('zh-CN',{hour12:false});
-  task.action='reject';task.comment=comment||'';task.task_status='done';task.handled_at=now;
-  order.status=STATUS.REJECTED;order.current_step=STEP_MAP[STATUS.REJECTED];order.updated_at=now;
-  
-  if(PARALLEL_ROLES.includes(task.role_type)){
-    let cancelled=0;
-    db.tasks.filter(t=>t.order_id===order.id&&PARALLEL_ROLES.includes(t.role_type)&&t.task_status==='pending').forEach(t=>{
-      t.task_status='cancelled';cancelled++;
-    });
-    saveDB(db);
-    return{success:true,order_id:order.id,cancelled_count:cancelled,message:ROLE_LABELS[task.role_type]+'会签驳回，流程终止'};
+// --- 维度权重配置（按场景）---
+const DIMENSION_WEIGHTS = {
+  'FIRST|true': {subject_quality: 0.25, financial: 0.30, project_quality: 0.45},
+  'FIRST|false': {subject_quality: 1.0},
+  'DYNAMIC|true': {subject_quality: 0.25, financial: 0.30, performance_quality: 0.45},
+  'DYNAMIC|false': {subject_quality: 0.35, performance_quality: 0.65}
+};
+
+function getDimensionWeights(scenario, isCredit) {
+  return DIMENSION_WEIGHTS[scenario + '|' + isCredit] || {subject_quality: 1.0};
+}
+
+// --- 评分引擎核心 ---
+function calculateScore(merchantId) {
+  let db = getDB();
+  let m = db.merchants.find(x => x.merchant_id === merchantId);
+  if (!m) throw new Error('客商不存在');
+
+  let isCredit = m.is_credit_applied === true || m.is_credit_applied === 'true';
+  let scenario = db.snapshots.some(s => s.merchant_id === merchantId) ? 'DYNAMIC' : 'FIRST';
+  let weights = getDimensionWeights(scenario, isCredit);
+
+  // 主体资质
+  let profile = {
+    registered_capital: m.registered_capital,
+    paid_in_capital: m.paid_in_capital,
+    establish_date: m.establish_date,
+    tax_completion_status: m.tax_completion_status,
+    lawsuit_total: m.lawsuit_total,
+    defendant_count: m.defendant_count,
+    executed_count: m.executed_count,
+    executed_amount: m.executed_amount,
+    paid_in_capital: m.paid_in_capital
+  };
+  let establishYears = 0;
+  if (m.establish_date) {
+    let y = parseInt(m.establish_date.substring(0, 4));
+    if (!isNaN(y)) establishYears = new Date().getFullYear() - y;
   }
-  saveDB(db);
-  return{success:true,order_id:order.id,message:ROLE_LABELS[task.role_type]+'驳回，审批流程终止'};
+  let paidInRatio = m.registered_capital > 0 ? m.paid_in_capital / m.registered_capital : 0;
+  let subjectValues = {
+    registered_capital: m.registered_capital,
+    paid_in_ratio: paidInRatio,
+    establish_years: establishYears,
+    tax_completion: m.tax_completion_status,
+    lawsuit_score: 0,
+    _profile: profile
+  };
+  let subjectScore = scoreDimension(RULES_SUBJECT, subjectValues);
+
+  // 财务情况
+  let finScore = 0;
+  let ratios = null;
+  if (isCredit) {
+    let finData = db.financial.filter(f => f.merchant_id === merchantId)
+      .sort((a, b) => b.period_year - a.period_year || (b.period_quarter || 0) - (a.period_quarter || 0));
+    if (finData.length > 0) {
+      ratios = computeRatios(finData[0]);
+      let finValues = {
+        asset_liability_ratio: ratios.asset_liability_ratio,
+        quick_ratio: ratios.quick_ratio,
+        cash_flow_ratio: ratios.cash_flow_ratio,
+        net_profit_margin: ratios.net_profit_margin,
+        roe: ratios.roe,
+        cash_flow_net_margin: ratios.cash_flow_net_margin,
+        asset_turnover: ratios.asset_turnover,
+        capital_operation: ratios.capital_operation
+      };
+      finScore = scoreDimension(RULES_FINANCIAL, finValues);
+    }
+  }
+
+  // 立项质量
+  let projectScore = 0;
+  if (isCredit && scenario === 'FIRST') {
+    let pq = db.project_quality.find(p => p.merchant_id === merchantId);
+    if (pq) {
+      let projValues = {
+        estimated_revenue: pq.estimated_revenue,
+        project_profit_rate: pq.project_profit_rate,
+        project_turnover: pq.project_turnover,
+        market_condition: pq.market_condition,
+        product_category: pq.product_category,
+        sales_cycle: pq.sales_cycle,
+        contract_terms: pq.contract_terms,
+        warehouse_control: pq.warehouse_control
+      };
+      projectScore = scoreDimension(RULES_PROJECT, projValues);
+    }
+  }
+
+  // 履约质量
+  let perfScore = 0;
+  if (scenario === 'DYNAMIC') {
+    let perf = db.performance_quality.find(p => p.merchant_id === merchantId);
+    if (perf) {
+      let overdueRatio = perf.annual_revenue > 0 ? perf.historical_overdue_amount / perf.annual_revenue : 0;
+      let firstOverdueRate = perf.total_project_count > 0 ? perf.overdue_project_count / perf.total_project_count : 0;
+      let overdueWarningRate = perf.total_batch_count > 0 ? perf.overdue_60days_batch_count / perf.total_batch_count : 0;
+      let perfValues = {
+        annual_revenue: perf.annual_revenue,
+        overdue_scale: overdueRatio,
+        first_overdue_rate: firstOverdueRate,
+        overdue_warning_rate: overdueWarningRate
+      };
+      perfScore = scoreDimension(RULES_PERFORMANCE, perfValues);
+    }
+  }
+
+  let dimScores = {
+    subject_quality: subjectScore,
+    financial: finScore,
+    project_quality: projectScore,
+    performance_quality: perfScore
+  };
+
+  // 基础准入分 = 各维度加权求和
+  let baseScore = 0;
+  for (let dim in weights) {
+    baseScore += dimScores[dim] * weights[dim];
+  }
+  baseScore = Math.round(baseScore * 100) / 100;
+
+  // 客商层级系数
+  let levelKey = m.merchant_level || 'other';
+  let levelInfo = LEVEL_COEFFICIENTS[levelKey] || LEVEL_COEFFICIENTS.other;
+  let coefficient = levelInfo.coefficient;
+  // 贸易商/平台公司系数下浮0.2
+  if (m.merchant_type === 'trade' || m.merchant_type === 'platform') {
+    coefficient = Math.max(0.1, coefficient - 0.2);
+  }
+
+  // 准入静态分 = 基础准入分 × 客商层级系数
+  let totalScore = Math.round(baseScore * coefficient * 100) / 100;
+  let [rating, riskCo] = mapRating(totalScore);
+  let qualified = rating !== 'UNQUALIFIED' && totalScore >= 60;
+
+  return {
+    merchant_id: merchantId,
+    scenario, is_credit_applied: isCredit,
+    dimension_scores: dimScores,
+    base_score: baseScore,
+    level_coefficient: coefficient,
+    total_score: totalScore,
+    rating, risk_coefficient: riskCo, qualified,
+    weights
+  };
 }
 
 // ======================================================================
-// 数据层 — localStorage 持久化 + 种子数据
+// 数据层 — localStorage 持久化
 // ======================================================================
-function getDB(){
-  let raw=localStorage.getItem('ca_db');
-  if(raw){
-    try{return JSON.parse(raw);}catch(e){}
-  }
+function getDB() {
+  let raw = localStorage.getItem('ca_db_v2');
+  if (raw) { try { return JSON.parse(raw); } catch(e) {} }
   return seedDB();
 }
 
-function saveDB(db){localStorage.setItem('ca_db',JSON.stringify(db));}
+function saveDB(db) { localStorage.setItem('ca_db_v2', JSON.stringify(db)); }
 
-function seedDB(){
-  let db={merchants:[],contacts:[],financial:[],orders:[],tasks:[],snapshots:[],nextMerchantId:1,nextOrderId:1,nextTaskId:1,nextSnapshotId:1};
-  
-  // 客商1
-  let m1={merchant_id:1,merchant_name:'深圳市宏远科技有限公司',tax_number:'91440300700123456X',legal_person:'张伟',registered_address:'深圳市南山区科技园南区',actual_controller:'张伟',registered_capital:5000000,paid_in_capital:4000000,establish_date:'2015-06-01',tax_completion_status:80,lawsuit_total:2,defendant_count:0,executed_count:0,executed_amount:0,avg_bank_flow:8000000,avg_approved_fund:10000000,created_at:new Date().toLocaleString('zh-CN',{hour12:false})};
+function nowStr() { return new Date().toLocaleString('zh-CN', {hour12: false}); }
+
+function seedDB() {
+  let db = {
+    merchants: [], financial: [], project_quality: [], performance_quality: [],
+    snapshots: [], nextMerchantId: 1, nextSnapshotId: 1
+  };
+
+  // 客商1 - 需授信
+  let m1 = {
+    merchant_id: 1, merchant_name: '深圳市宏远科技有限公司', tax_number: '91440300700123456X',
+    legal_person: '张伟', actual_controller: '张伟',
+    registered_capital: 50000000, paid_in_capital: 45000000, establish_date: '2015-06-01',
+    tax_completion_status: 80, lawsuit_total: 2, defendant_count: 0, executed_count: 0, executed_amount: 0,
+    avg_bank_flow: 80000000, avg_approved_fund: 100000000, registered_address: '深圳市南山区科技园南区',
+    is_credit_applied: true, merchant_level: 'standard', merchant_type: 'general',
+    created_at: nowStr(), updated_at: nowStr()
+  };
   db.merchants.push(m1);
-  db.contacts.push({id:1,merchant_id:1,name:'李明',position:'采购总监',phone:'13800138001',email:'liming@hongyuan.com',business_role:'业务对接人',is_primary:1});
-  db.contacts.push({id:2,merchant_id:1,name:'王芳',position:'财务经理',phone:'13800138002',email:'wangfang@hongyuan.com',business_role:'财务对接人',is_primary:0});
-  db.financial.push({merchant_id:1,period_year:2024,period_quarter:4,total_asset:20000000,total_liability:8000000,current_asset:10000000,current_liability:5000000,revenue:15000000,net_profit:2000000,inventory:3000000,prepay:500000,operating_cash_flow:3000000,net_asset:12000000});
-  db.financial.push({merchant_id:1,period_year:2023,period_quarter:4,total_asset:16000000,total_liability:7000000,current_asset:8000000,current_liability:4000000,revenue:12000000,net_profit:1500000,inventory:2500000,prepay:400000,operating_cash_flow:2500000,net_asset:9000000});
-  
-  // 客商2
-  let m2={merchant_id:2,merchant_name:'杭州盛达贸易有限公司',tax_number:'91330100500123457Y',legal_person:'陈强',registered_address:'杭州市余杭区五常街道',actual_controller:'陈强',registered_capital:1000000,paid_in_capital:500000,establish_date:'2020-03-15',tax_completion_status:60,lawsuit_total:5,defendant_count:2,executed_count:1,executed_amount:200000,avg_bank_flow:3000000,avg_approved_fund:5000000,created_at:new Date().toLocaleString('zh-CN',{hour12:false})};
+  db.financial.push({merchant_id:1, period_year:2024, period_quarter:4, total_asset:200000000, total_liability:80000000, current_asset:100000000, current_liability:50000000, revenue:150000000, net_profit:20000000, inventory:30000000, prepay:5000000, operating_cash_flow:30000000, net_asset:120000000, created_at: nowStr()});
+  db.financial.push({merchant_id:1, period_year:2023, period_quarter:4, total_asset:160000000, total_liability:70000000, current_asset:80000000, current_liability:40000000, revenue:120000000, net_profit:15000000, inventory:25000000, prepay:4000000, operating_cash_flow:25000000, net_asset:90000000, created_at: nowStr()});
+  db.project_quality.push({merchant_id:1, estimated_revenue:20000000, project_profit_rate:0.08, project_turnover:5, market_condition:2, product_category:0, sales_cycle:30, contract_terms:1, warehouse_control:0, created_at: nowStr()});
+
+  // 客商2 - 需授信，资质较差
+  let m2 = {
+    merchant_id: 2, merchant_name: '杭州盛达贸易有限公司', tax_number: '91330100500123457Y',
+    legal_person: '陈强', actual_controller: '陈强',
+    registered_capital: 5000000, paid_in_capital: 2500000, establish_date: '2020-03-15',
+    tax_completion_status: 60, lawsuit_total: 5, defendant_count: 2, executed_count: 1, executed_amount: 200000,
+    avg_bank_flow: 30000000, avg_approved_fund: 50000000, registered_address: '杭州市余杭区五常街道',
+    is_credit_applied: true, merchant_level: 'other', merchant_type: 'trade',
+    created_at: nowStr(), updated_at: nowStr()
+  };
   db.merchants.push(m2);
-  db.contacts.push({id:3,merchant_id:2,name:'刘洋',position:'总经理',phone:'13900139001',email:'liuyang@shengda.com',business_role:'业务对接人',is_primary:1});
-  db.financial.push({merchant_id:2,period_year:2024,period_quarter:4,total_asset:5000000,total_liability:3500000,current_asset:2000000,current_liability:1800000,revenue:8000000,net_profit:400000,inventory:1200000,prepay:200000,operating_cash_flow:600000,net_asset:1500000});
-  
-  // 客商3
-  let m3={merchant_id:3,merchant_name:'北京创新未来科技股份有限公司',tax_number:'91110108800123458Z',legal_person:'赵敏',registered_address:'北京市海淀区中关村软件园',actual_controller:'赵敏',registered_capital:10000000,paid_in_capital:10000000,establish_date:'2022-09-01',tax_completion_status:90,lawsuit_total:0,defendant_count:0,executed_count:0,executed_amount:0,avg_bank_flow:5000000,avg_approved_fund:8000000,created_at:new Date().toLocaleString('zh-CN',{hour12:false})};
+  db.financial.push({merchant_id:2, period_year:2024, period_quarter:4, total_asset:50000000, total_liability:35000000, current_asset:20000000, current_liability:18000000, revenue:80000000, net_profit:4000000, inventory:12000000, prepay:2000000, operating_cash_flow:6000000, net_asset:15000000, created_at: nowStr()});
+  db.project_quality.push({merchant_id:2, estimated_revenue:8000000, project_profit_rate:0.05, project_turnover:3, market_condition:1, product_category:1, sales_cycle:50, contract_terms:2, warehouse_control:1, created_at: nowStr()});
+
+  // 客商3 - 无需授信
+  let m3 = {
+    merchant_id: 3, merchant_name: '北京创新未来科技股份有限公司', tax_number: '91110108800123458Z',
+    legal_person: '赵敏', actual_controller: '赵敏',
+    registered_capital: 100000000, paid_in_capital: 100000000, establish_date: '2012-09-01',
+    tax_completion_status: 90, lawsuit_total: 0, defendant_count: 0, executed_count: 0, executed_amount: 0,
+    avg_bank_flow: 50000000, avg_approved_fund: 80000000, registered_address: '北京市海淀区中关村软件园',
+    is_credit_applied: false, merchant_level: 'core', merchant_type: 'general',
+    created_at: nowStr(), updated_at: nowStr()
+  };
   db.merchants.push(m3);
-  db.contacts.push({id:4,merchant_id:3,name:'孙静',position:'商务总监',phone:'13700137001',email:'sunjing@chuangxin.com',business_role:'业务对接人',is_primary:1});
-  
-  db.nextMerchantId=4;db.nextOrderId=1;db.nextTaskId=1;db.nextSnapshotId=1;
+
+  db.nextMerchantId = 4;
+  db.nextSnapshotId = 1;
   saveDB(db);
   return db;
 }
 
-function resetDB(){
-  localStorage.removeItem('ca_db');
+function resetDB() {
+  localStorage.removeItem('ca_db_v2');
   seedDB();
-  toast('数据已重置为初始状态','success');
+  toast('数据已重置为初始状态', 'success');
   navigateTo('dashboard');
 }
 
 // ======================================================================
-// UI 渲染逻辑
+// 工具函数
 // ======================================================================
-let currentUser='业务员小王';
-
-function toast(msg,type){
-  let el=document.createElement('div');
-  el.className='toast '+(type||'info');
-  el.textContent=msg;
+function toast(msg, type) {
+  let el = document.createElement('div');
+  el.className = 'toast ' + (type || 'info');
+  el.textContent = msg;
   document.getElementById('toastContainer').appendChild(el);
-  setTimeout(()=>el.remove(),3000);
+  setTimeout(() => el.remove(), 3000);
 }
 
-function fmtMoney(v){
-  if(v===null||v===undefined)return '-';
-  return Number(v).toLocaleString('zh-CN',{maximumFractionDigits:0});
+function fmtMoney(v) {
+  if (v === null || v === undefined) return '-';
+  return Number(v).toLocaleString('zh-CN', {maximumFractionDigits: 0});
 }
 
-function statusBadge(status){
-  const map={pending_dept:['badge-blue','待复核'],parallel_signing:['badge-orange','会签中'],final_signing:['badge-blue','终审中'],approved:['badge-green','已通过'],rejected:['badge-red','已驳回']};
-  let[cls,txt]=map[status]||['badge-gray',status];
-  return`<span class="badge ${cls}">${txt}</span>`;
+function fmtPct(v) {
+  if (v === null || v === undefined) return '-';
+  return (Number(v) * 100).toFixed(1) + '%';
 }
 
-function scoreBadge(rating){
-  return`<span class="score-badge score-${rating}">${rating}</span>`;
+function val(id) { let el = document.getElementById(id); return el ? el.value : ''; }
+
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+function scoreBadge(rating) {
+  return '<span class="score-badge score-' + rating + '">' + rating + '</span>';
 }
 
-// --- 看板 ---
-function renderDashboard(){
-  let db=getDB();
-  let totalM=db.merchants.length;
-  let pending=db.tasks.filter(t=>t.task_status==='pending').length;
-  let approved=db.orders.filter(o=>o.status===STATUS.APPROVED).length;
-  let scored=db.snapshots.length;
-  
-  let statusCounts={};
-  db.orders.forEach(o=>{statusCounts[o.status]=(statusCounts[o.status]||0)+1;});
-  
-  let ratingCounts={};
-  db.snapshots.forEach(s=>{ratingCounts[s.rating]=(ratingCounts[s.rating]||0)+1;});
-  
-  let html=`
+function levelBadge(level) {
+  const names = {strategic: '战略层', core: '核心层', standard: '标准层', other: '其他'};
+  return '<span class="level-badge level-' + level + '">' + (names[level] || level) + '</span>';
+}
+
+function creditBadge(isCredit) {
+  return isCredit ? '<span class="badge badge-purple">需授信</span>' : '<span class="badge badge-gray">无需授信</span>';
+}
+
+// ======================================================================
+// CSV 解析（支持逗号和制表符分隔）
+// ======================================================================
+function parseDelimited(text) {
+  let lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return [];
+  let delimiter = lines[0].includes('\t') ? '\t' : ',';
+  let headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
+  let rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    let values = lines[i].split(delimiter).map(v => v.trim().replace(/^"|"$/g, ''));
+    let row = {};
+    headers.forEach((h, j) => row[h] = values[j]);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function downloadCSV(filename, headers, sampleRow) {
+  let csv = headers.join(',') + '\n';
+  if (sampleRow) csv += sampleRow.join(',') + '\n';
+  let blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8'});
+  let link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+// ======================================================================
+// 系统看板
+// ======================================================================
+function renderDashboard() {
+  let db = getDB();
+  let total = db.merchants.length;
+  let rated = db.snapshots.length;
+  let qualified = db.snapshots.filter(s => s.rating !== 'UNQUALIFIED').length;
+  let pending = db.merchants.filter(m => !db.snapshots.some(s => s.merchant_id === m.merchant_id)).length;
+
+  let ratingCounts = {};
+  db.snapshots.forEach(s => { ratingCounts[s.rating] = (ratingCounts[s.rating] || 0) + 1; });
+
+  let creditCount = db.merchants.filter(m => m.is_credit_applied).length;
+  let noCreditCount = total - creditCount;
+
+  let html = `
   <div class="stat-grid">
-    <div class="stat-card"><div class="label">客商总数</div><div class="value">${totalM}</div><div class="sub">已录入系统</div></div>
-    <div class="stat-card"><div class="label">待办任务</div><div class="value" style="color:var(--orange)">${pending}</div><div class="sub">待处理审批</div></div>
-    <div class="stat-card"><div class="label">已通过审批</div><div class="value" style="color:var(--green)">${approved}</div><div class="sub">累计通过</div></div>
-    <div class="stat-card"><div class="label">评分客商</div><div class="value" style="color:var(--primary)">${scored}</div><div class="sub">已有评级</div></div>
+    <div class="stat-card"><div class="label">客商总数</div><div class="value">${total}</div><div class="sub">已录入系统</div></div>
+    <div class="stat-card"><div class="label">已评级</div><div class="value" style="color:var(--primary)">${rated}</div><div class="sub">完成准入评级</div></div>
+    <div class="stat-card"><div class="label">准入通过</div><div class="value" style="color:var(--green)">${qualified}</div><div class="sub">评级≥60分</div></div>
+    <div class="stat-card"><div class="label">待评级</div><div class="value" style="color:var(--orange)">${pending}</div><div class="sub">尚未评级</div></div>
   </div>
+
   <div class="card">
-    <div class="card-header"><h3>审批状态分布</h3></div>
-    <table><thead><tr><th>状态</th><th>数量</th></tr></thead><tbody>`;
-  const statusNames={pending_dept:'待复核',parallel_signing:'会签中',final_signing:'终审中',approved:'已通过',rejected:'已驳回'};
-  for(let s in statusNames){
-    if(statusCounts[s]!==undefined){
-      html+=`<tr><td>${statusBadge(s)}</td><td>${statusCounts[s]}</td></tr>`;
-    }
+    <div class="card-header"><h3>授信类型分布</h3></div>
+    <table><thead><tr><th>类型</th><th>数量</th><th>占比</th></tr></thead><tbody>
+      <tr><td>需申报风险敞口</td><td>${creditCount}</td><td>${total ? Math.round(creditCount/total*100) : 0}%</td></tr>
+      <tr><td>无需申报风险敞口</td><td>${noCreditCount}</td><td>${total ? Math.round(noCreditCount/total*100) : 0}%</td></tr>
+    </tbody></table>
+  </div>`;
+
+  if (Object.keys(ratingCounts).length > 0) {
+    html += `<div class="card"><div class="card-header"><h3>评级分布</h3></div><table><thead><tr><th>评级</th><th>数量</th><th>占比</th><th>分布</th></tr></thead><tbody>`;
+    const order = ['AAA','AA','A','BBB','BB','B','UNQUALIFIED'];
+    let maxCount = Math.max(...Object.values(ratingCounts));
+    order.forEach(r => {
+      if (ratingCounts[r] !== undefined) {
+        let pct = rated ? Math.round(ratingCounts[r]/rated*100) : 0;
+        let barWidth = maxCount ? Math.round(ratingCounts[r]/maxCount*100) : 0;
+        html += `<tr><td>${scoreBadge(r)}</td><td>${ratingCounts[r]}</td><td>${pct}%</td><td><div style="width:200px;height:8px;background:var(--border);border-radius:4px;overflow:hidden"><div style="width:${barWidth}%;height:100%;background:var(--primary);border-radius:4px"></div></div></td></tr>`;
+      }
+    });
+    html += `</tbody></table></div>`;
   }
-  if(Object.keys(statusCounts).length===0)html+='<tr><td colspan="2" class="empty">暂无审批记录</td></tr>';
-  html+=`</tbody></table></div>`;
-  
-  if(Object.keys(ratingCounts).length>0){
-    html+=`<div class="card"><div class="card-header"><h3>评级分布</h3></div><table><thead><tr><th>评级</th><th>数量</th></tr></thead><tbody>`;
-    for(let r in ratingCounts){html+=`<tr><td>${scoreBadge(r)}</td><td>${ratingCounts[r]}</td></tr>`;}
-    html+=`</tbody></table></div>`;
-  }
-  
-  html+=`<div class="card"><div class="card-header"><h3>数据管理</h3></div><button class="btn btn-outline" onclick="resetDB()">重置为初始数据</button></div>`;
-  
-  document.getElementById('view-dashboard').innerHTML=html;
+
+  html += `<div class="card"><div class="card-header"><h3>快捷操作</h3></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="navigateTo('merchants')">新增客商</button>
+      <button class="btn btn-outline" onclick="navigateTo('financial')">财务数据导入</button>
+      <button class="btn btn-outline" onclick="navigateTo('project')">立项质量录入</button>
+      <button class="btn btn-outline" onclick="navigateTo('performance')">履约质量录入</button>
+      <button class="btn btn-outline" onclick="navigateTo('pool')">查看客商池</button>
+    </div>
+  </div>
+  <div class="card"><div class="card-header"><h3>数据管理</h3></div><button class="btn btn-outline" onclick="resetDB()">重置为初始数据</button></div>`;
+
+  document.getElementById('view-dashboard').innerHTML = html;
 }
 
-// --- 客商管理 ---
-function renderMerchants(){
-  let db=getDB();
-  let html=`
-  <div class="card">
+// ======================================================================
+// 客商管理（新增/编辑/详情）
+// ======================================================================
+function renderMerchants() {
+  let db = getDB();
+  let html = `<div class="card">
     <div class="card-header">
       <h3>客商列表</h3>
       <button class="btn btn-primary btn-sm" onclick="showMerchantForm()">+ 新增客商</button>
     </div>
-    <table><thead><tr><th>名称</th><th>法人</th><th>注册资金</th><th>成立日期</th><th>评级</th><th>操作</th></tr></thead><tbody>`;
-  db.merchants.forEach(m=>{
-    let snap=db.snapshots.filter(s=>s.merchant_id===m.merchant_id).sort((a,b)=>b.id-a.id)[0];
-    html+=`<tr>
-      <td>${m.merchant_name}</td><td>${m.legal_person}</td><td>${fmtMoney(m.registered_capital)}</td>
-      <td>${m.establish_date||'-'}</td><td>${snap?scoreBadge(snap.rating):'<span class="badge badge-gray">未评级</span>'}</td>
-      <td><button class="btn btn-outline btn-sm" onclick="showMerchantDetail(${m.merchant_id})">详情</button>
-      <button class="btn btn-outline btn-sm" onclick="showFinancialForm(${m.merchant_id})">财务</button>
-      <button class="btn btn-primary btn-sm" onclick="showSubmitApproval(${m.merchant_id})">提交审批</button></td>
+    <table><thead><tr><th>客商名称</th><th>法人</th><th>注册资金</th><th>授信</th><th>层级</th><th>评级</th><th>最后修改</th><th>操作</th></tr></thead><tbody>`;
+  db.merchants.forEach(m => {
+    let snap = db.snapshots.filter(s => s.merchant_id === m.merchant_id).sort((a,b) => b.id - a.id)[0];
+    html += `<tr>
+      <td>${m.merchant_name}</td>
+      <td>${m.legal_person||'-'}</td>
+      <td>${fmtMoney(m.registered_capital)}</td>
+      <td>${creditBadge(m.is_credit_applied)}</td>
+      <td>${levelBadge(m.merchant_level||'other')}</td>
+      <td>${snap ? scoreBadge(snap.rating) : '<span class="badge badge-gray">未评级</span>'}</td>
+      <td style="font-size:11px;color:var(--muted)">${m.updated_at||m.created_at||'-'}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="showMerchantDetail(${m.merchant_id})">详情</button>
+        <button class="btn btn-outline btn-sm" onclick="showMerchantForm(${m.merchant_id})">编辑</button>
+        <button class="btn btn-success btn-sm" onclick="showRatingModal(${m.merchant_id})">评级</button>
+      </td>
     </tr>`;
   });
-  if(db.merchants.length===0)html+='<tr><td colspan="6" class="empty">暂无客商数据</td></tr>';
-  html+=`</tbody></table></div>`;
-  document.getElementById('view-merchants').innerHTML=html;
+  if (db.merchants.length === 0) html += '<tr><td colspan="8" class="empty">暂无客商数据，请点击"新增客商"</td></tr>';
+  html += `</tbody></table></div>`;
+  document.getElementById('view-merchants').innerHTML = html;
 }
 
-function showMerchantForm(){
-  let html=`<h3>新增客商</h3>
+function showMerchantForm(editId) {
+  let db = getDB();
+  let m = editId ? db.merchants.find(x => x.merchant_id === editId) : null;
+  let title = m ? '编辑客商 - ' + m.merchant_name : '新增客商';
+  let html = `<h3>${title}</h3>
   <div class="form-row">
-    <div class="form-group"><label>客商名称 *</label><input id="m_name" placeholder="公司全称"></div>
-    <div class="form-group"><label>统一社会信用代码 *</label><input id="m_tax" placeholder="18位"></div>
+    <div class="form-group"><label>客商名称 *</label><input id="m_name" value="${m?m.merchant_name:''}" placeholder="公司全称"></div>
+    <div class="form-group"><label>统一社会信用代码 *</label><input id="m_tax" value="${m?m.tax_number:''}" placeholder="18位"></div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>法定代表人 *</label><input id="m_legal" placeholder="姓名"></div>
-    <div class="form-group"><label>实际控制人</label><input id="m_controller" placeholder="姓名"></div>
+    <div class="form-group"><label>法定代表人 *</label><input id="m_legal" value="${m?m.legal_person:''}" placeholder="姓名"></div>
+    <div class="form-group"><label>实际控制人</label><input id="m_controller" value="${m?m.actual_controller||'':''}" placeholder="姓名"></div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>注册资金（元）</label><input id="m_capital" type="number" placeholder="5000000"></div>
-    <div class="form-group"><label>实缴资金（元）</label><input id="m_paid" type="number" placeholder="4000000"></div>
+    <div class="form-group"><label>注册资金（元）</label><input id="m_capital" type="number" value="${m?m.registered_capital||0:0}" placeholder="50000000"></div>
+    <div class="form-group"><label>实缴资金（元）</label><input id="m_paid" type="number" value="${m?m.paid_in_capital||0:0}" placeholder="40000000"></div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>成立日期</label><input id="m_date" type="date"></div>
-    <div class="form-group"><label>纳税完成度（0-100）</label><input id="m_tax_status" type="number" value="80"></div>
+    <div class="form-group"><label>成立日期</label><input id="m_date" type="date" value="${m?m.establish_date||'':''}"></div>
+    <div class="form-group"><label>纳税完成度（0-100）</label><input id="m_tax_status" type="number" value="${m?m.tax_completion_status||80:80}"></div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>涉诉总数</label><input id="m_lawsuit" type="number" value="0"></div>
-    <div class="form-group"><label>被告次数</label><input id="m_defendant" type="number" value="0"></div>
+    <div class="form-group"><label>涉诉总数</label><input id="m_lawsuit" type="number" value="${m?m.lawsuit_total||0:0}"></div>
+    <div class="form-group"><label>被告次数</label><input id="m_defendant" type="number" value="${m?m.defendant_count||0:0}"></div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>被执行次数</label><input id="m_executed" type="number" value="0"></div>
-    <div class="form-group"><label>被执行金额</label><input id="m_exec_amount" type="number" value="0"></div>
+    <div class="form-group"><label>被执行次数</label><input id="m_executed" type="number" value="${m?m.executed_count||0:0}"></div>
+    <div class="form-group"><label>被执行金额</label><input id="m_exec_amount" type="number" value="${m?m.executed_amount||0:0}"></div>
   </div>
   <div class="form-row">
-    <div class="form-group"><label>平均流水</label><input id="m_flow" type="number" value="5000000"></div>
-    <div class="form-group"><label>平均授信</label><input id="m_credit" type="number" value="8000000"></div>
+    <div class="form-group"><label>平均银行流水</label><input id="m_flow" type="number" value="${m?m.avg_bank_flow||0:0}"></div>
+    <div class="form-group"><label>平均授信额度</label><input id="m_credit_fund" type="number" value="${m?m.avg_approved_fund||0:0}"></div>
   </div>
-  <div class="form-group"><label>注册地址</label><input id="m_addr" placeholder="地址"></div>
-  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveMerchant()">保存</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
+  <div class="form-group"><label>注册地址</label><input id="m_addr" value="${m?m.registered_address||'':''}" placeholder="地址"></div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>客商层级</label>
+      <select id="m_level">
+        <option value="strategic" ${m&&m.merchant_level==='strategic'?'selected':''}>战略层（系数1.5）</option>
+        <option value="core" ${m&&m.merchant_level==='core'?'selected':''}>核心层（系数1.3）</option>
+        <option value="standard" ${m&&m.merchant_level==='standard'?'selected':''}>标准层（系数1.1）</option>
+        <option value="other" ${(!m||m.merchant_level==='other'||!m.merchant_level)?'selected':''}>其他（系数1.0）</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>客商类型</label>
+      <select id="m_type">
+        <option value="general" ${(!m||m.merchant_type==='general'||!m.merchant_type)?'selected':''}>一般企业</option>
+        <option value="trade" ${m&&m.merchant_type==='trade'?'selected':''}>贸易商（系数下浮0.2）</option>
+        <option value="platform" ${m&&m.merchant_type==='platform'?'selected':''}>平台公司（系数下浮0.2）</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>是否需申报风险敞口（授信）</label>
+    <div class="toggle-label">
+      <label class="toggle">
+        <input type="checkbox" id="m_credit_toggle" ${(!m||m.is_credit_applied)?'checked':''}>
+        <span class="toggle-slider"></span>
+      </label>
+      <span id="credit_label">${(!m||m.is_credit_applied)?'需授信 - 考核主体资质+财务+立项/履约':'无需授信 - 仅考核主体资质'}</span>
+    </div>
+  </div>
+  <div class="modal-actions">
+    <button class="btn btn-outline" onclick="closeModal()">取消</button>
+    <button class="btn btn-primary" onclick="saveMerchant(${editId||0})">${m?'保存修改':'创建客商'}</button>
+  </div>`;
+  document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modal').classList.add('show');
+  // 绑定toggle事件
+  document.getElementById('m_credit_toggle').addEventListener('change', function(e) {
+    document.getElementById('credit_label').textContent = e.target.checked ? '需授信 - 考核主体资质+财务+立项/履约' : '无需授信 - 仅考核主体资质';
+  });
 }
 
-function saveMerchant(){
-  let db=getDB();
-  let m={merchant_id:db.nextMerchantId++,merchant_name:val('m_name'),tax_number:val('m_tax'),legal_person:val('m_legal'),actual_controller:val('m_controller'),registered_capital:+val('m_capital')||0,paid_in_capital:+val('m_paid')||0,establish_date:val('m_date'),tax_completion_status:+val('m_tax_status')||0,lawsuit_total:+val('m_lawsuit')||0,defendant_count:+val('m_defendant')||0,executed_count:+val('m_executed')||0,executed_amount:+val('m_exec_amount')||0,avg_bank_flow:+val('m_flow')||0,avg_approved_fund:+val('m_credit')||0,registered_address:val('m_addr'),created_at:new Date().toLocaleString('zh-CN',{hour12:false})};
-  if(!m.merchant_name||!m.tax_number){toast('名称和信用代码必填','error');return;}
-  db.merchants.push(m);
+function saveMerchant(editId) {
+  let db = getDB();
+  let name = val('m_name').trim();
+  let tax = val('m_tax').trim();
+  if (!name || !tax) { toast('名称和信用代码必填', 'error'); return; }
+  let data = {
+    merchant_name: name, tax_number: tax, legal_person: val('m_legal'),
+    actual_controller: val('m_controller'),
+    registered_capital: +val('m_capital') || 0, paid_in_capital: +val('m_paid') || 0,
+    establish_date: val('m_date'), tax_completion_status: +val('m_tax_status') || 0,
+    lawsuit_total: +val('m_lawsuit') || 0, defendant_count: +val('m_defendant') || 0,
+    executed_count: +val('m_executed') || 0, executed_amount: +val('m_exec_amount') || 0,
+    avg_bank_flow: +val('m_flow') || 0, avg_approved_fund: +val('m_credit_fund') || 0,
+    registered_address: val('m_addr'),
+    is_credit_applied: document.getElementById('m_credit_toggle').checked,
+    merchant_level: val('m_level'), merchant_type: val('m_type'),
+    updated_at: nowStr()
+  };
+  if (editId) {
+    let m = db.merchants.find(x => x.merchant_id === editId);
+    if (m) { Object.assign(m, data); }
+    toast('客商信息已更新', 'success');
+  } else {
+    data.merchant_id = db.nextMerchantId++;
+    data.created_at = nowStr();
+    db.merchants.push(data);
+    toast('客商创建成功', 'success');
+  }
   saveDB(db);
-  closeModal();toast('客商创建成功','success');renderMerchants();
+  closeModal();
+  renderMerchants();
 }
 
-function showMerchantDetail(id){
-  let db=getDB();
-  let m=db.merchants.find(x=>x.merchant_id===id);
-  if(!m)return;
-  let contacts=db.contacts.filter(c=>c.merchant_id===id);
-  let fin=db.financial.filter(f=>f.merchant_id===id).sort((a,b)=>b.period_year-a.period_year);
-  let snap=db.snapshots.filter(s=>s.merchant_id===id).sort((a,b)=>b.id-a.id)[0];
-  
-  let result=null;
-  try{result=calculateScore(id);}catch(e){}
-  
-  let html=`<h3>${m.merchant_name}</h3>`;
-  
-  if(result){
-    html+=`<div class="card" style="background:#f8fafc;margin-bottom:16px">
+function showMerchantDetail(id) {
+  let db = getDB();
+  let m = db.merchants.find(x => x.merchant_id === id);
+  if (!m) return;
+  let result = null;
+  try { result = calculateScore(id); } catch(e) {}
+  let snap = db.snapshots.filter(s => s.merchant_id === id).sort((a,b) => b.id - a.id)[0];
+  let fin = db.financial.filter(f => f.merchant_id === id).sort((a,b) => b.period_year - a.period_year);
+  let pq = db.project_quality.find(p => p.merchant_id === id);
+  let perf = db.performance_quality.find(p => p.merchant_id === id);
+
+  let html = `<h3>${m.merchant_name}</h3>`;
+
+  // 评分卡片
+  if (result) {
+    let dimNames = {subject_quality:'主体资质', financial:'财务情况', project_quality:'立项质量', performance_quality:'履约质量'};
+    let activeDims = Object.keys(result.weights);
+    html += `<div class="card" style="background:#f8fafc;margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
         <div style="font-size:36px;font-weight:700;color:var(--primary)">${result.total_score}</div>
         <div>${scoreBadge(result.rating)}</div>
-        <div style="color:var(--muted);font-size:13px">场景: ${result.scenario==='FIRST'?'首次':'动态'} | 授信: ${result.is_credit_applied?'是':'否'}</div>
+        <div style="color:var(--muted);font-size:13px">
+          场景: ${result.scenario==='FIRST'?'首次准入':'动态履约'} | ${creditBadge(result.is_credit_applied)}<br>
+          基础分: ${result.base_score} | 层级系数: ${result.level_coefficient}
+        </div>
       </div>`;
-    const dimNames={subject_quality:'主体资质',financial:'财务',project_quality:'项目质量',performance_quality:'履约质量'};
-    for(let dim of ALL_DIMENSIONS){
-      let active=result.scenario==='FIRST'?result.is_credit_applied?['subject_quality','financial','project_quality']:['subject_quality']:result.is_credit_applied?['subject_quality','financial','performance_quality']:['subject_quality','performance_quality'];
-      let score=result.dimension_scores[dim]||0;
-      html+=`<div class="dimension-score"><span class="name">${dimNames[dim]}</span><div class="bar"><div style="width:${Math.min(score,100)}%"></div></div><span class="val">${score}</span></div>`;
+    for (let dim of ['subject_quality','financial','project_quality','performance_quality']) {
+      let score = result.dimension_scores[dim] || 0;
+      let active = activeDims.includes(dim);
+      let pct = Math.min(score, 100);
+      let color = score >= 60 ? 'var(--green)' : 'var(--red)';
+      html += `<div class="dimension-score">
+        <span class="name">${dimNames[dim]}${active?'':'(未考核)'}</span>
+        <div class="bar"><div style="width:${pct}%;background:${active?color:'var(--border)'}"></div></div>
+        <span class="val">${active?score:'-'}</span>
+      </div>`;
     }
-    html+=`</div>`;
+    html += `</div>`;
   }
-  
-  html+=`<table><tbody>
-    <tr><td style="width:120px;color:var(--muted)">信用代码</td><td>${m.tax_number}</td></tr>
-    <tr><td style="color:var(--muted)">法定代表人</td><td>${m.legal_person}</td></tr>
-    <tr><td style="color:var(--muted)">注册资金</td><td>${fmtMoney(m.registered_capital)} 元</td></tr>
-    <tr><td style="color:var(--muted)">实缴资金</td><td>${fmtMoney(m.paid_in_capital)} 元</td></tr>
-    <tr><td style="color:var(--muted)">成立日期</td><td>${m.establish_date||'-'}</td></tr>
-    <tr><td style="color:var(--muted)">注册地址</td><td>${m.registered_address||'-'}</td></tr>
-    <tr><td style="color:var(--muted)">纳税完成度</td><td>${m.tax_completion_status}</td></tr>
-    <tr><td style="color:var(--muted)">涉诉/被告</td><td>${m.lawsuit_total} / ${m.defendant_count}</td></tr>
-    <tr><td style="color:var(--muted)">被执行</td><td>${m.executed_count}次 / ${fmtMoney(m.executed_amount)}元</td></tr>
-    <tr><td style="color:var(--muted)">流水/授信</td><td>${fmtMoney(m.avg_bank_flow)} / ${fmtMoney(m.avg_approved_fund)}</td></tr>
-  </tbody></table>`;
-  
-  if(contacts.length>0){
-    html+=`<h3 style="margin-top:20px">对接人信息</h3><table><thead><tr><th>姓名</th><th>职务</th><th>电话</th><th>邮箱</th><th>角色</th></tr></thead><tbody>`;
-    contacts.forEach(c=>{html+=`<tr><td>${c.name}${c.is_primary?' ⭐':''}</td><td>${c.position||'-'}</td><td>${c.phone||'-'}</td><td>${c.email||'-'}</td><td>${c.business_role||'-'}</td></tr>`;});
-    html+=`</tbody></table>`;
+
+  // 基本信息
+  html += `<div class="info-grid">
+    <div class="info-item"><span class="lbl">统一社会信用代码</span><span class="val">${m.tax_number}</span></div>
+    <div class="info-item"><span class="lbl">法定代表人</span><span class="val">${m.legal_person||'-'}</span></div>
+    <div class="info-item"><span class="lbl">实际控制人</span><span class="val">${m.actual_controller||'-'}</span></div>
+    <div class="info-item"><span class="lbl">注册资金</span><span class="val">${fmtMoney(m.registered_capital)} 元</span></div>
+    <div class="info-item"><span class="lbl">实缴资金</span><span class="val">${fmtMoney(m.paid_in_capital)} 元</span></div>
+    <div class="info-item"><span class="lbl">实缴比例</span><span class="val">${m.registered_capital>0?fmtPct(m.paid_in_capital/m.registered_capital):'-'}</span></div>
+    <div class="info-item"><span class="lbl">成立日期</span><span class="val">${m.establish_date||'-'}</span></div>
+    <div class="info-item"><span class="lbl">客商层级</span><span class="val">${levelBadge(m.merchant_level||'other')}</span></div>
+    <div class="info-item"><span class="lbl">客商类型</span><span class="val">${m.merchant_type==='trade'?'贸易商':m.merchant_type==='platform'?'平台公司':'一般企业'}</span></div>
+    <div class="info-item"><span class="lbl">是否授信</span><span class="val">${creditBadge(m.is_credit_applied)}</span></div>
+    <div class="info-item"><span class="lbl">纳税完成度</span><span class="val">${m.tax_completion_status||'-'}</span></div>
+    <div class="info-item"><span class="lbl">涉诉/被告</span><span class="val">${m.lawsuit_total||0} / ${m.defendant_count||0}</span></div>
+    <div class="info-item"><span class="lbl">被执行</span><span class="val">${m.executed_count||0}次 / ${fmtMoney(m.executed_amount)}元</span></div>
+    <div class="info-item"><span class="lbl">银行流水/授信额度</span><span class="val">${fmtMoney(m.avg_bank_flow)} / ${fmtMoney(m.avg_approved_fund)}</span></div>
+    <div class="info-item"><span class="lbl">创建时间</span><span class="val" style="font-size:12px">${m.created_at||'-'}</span></div>
+    <div class="info-item"><span class="lbl">最后修改</span><span class="val" style="font-size:12px">${m.updated_at||'-'}</span></div>
+  </div>`;
+
+  if (m.registered_address) {
+    html += `<div class="info-item" style="margin-bottom:12px"><span class="lbl">注册地址</span><span class="val">${m.registered_address}</span></div>`;
   }
-  
-  if(fin.length>0){
-    html+=`<h3 style="margin-top:20px">财务数据</h3><table><thead><tr><th>年度</th><th>季度</th><th>总资产</th><th>总负债</th><th>营收</th><th>净利润</th></tr></thead><tbody>`;
-    fin.forEach(f=>{html+=`<tr><td>${f.period_year}</td><td>Q${f.period_quarter||'-'}</td><td>${fmtMoney(f.total_asset)}</td><td>${fmtMoney(f.total_liability)}</td><td>${fmtMoney(f.revenue)}</td><td>${fmtMoney(f.net_profit)}</td></tr>`;});
-    html+=`</tbody></table>`;
+
+  // 财务数据
+  if (fin.length > 0) {
+    html += `<h3 style="margin-top:16px">财务数据</h3><table><thead><tr><th>年度</th><th>季度</th><th>总资产</th><th>总负债</th><th>营收</th><th>净利润</th><th>经营现金流</th></tr></thead><tbody>`;
+    fin.forEach(f => {
+      html += `<tr><td>${f.period_year}</td><td>${f.period_quarter?'Q'+f.period_quarter:'-'}</td><td>${fmtMoney(f.total_asset)}</td><td>${fmtMoney(f.total_liability)}</td><td>${fmtMoney(f.revenue)}</td><td>${fmtMoney(f.net_profit)}</td><td>${fmtMoney(f.operating_cash_flow)}</td></tr>`;
+    });
+    html += `</tbody></table>`;
   }
-  
-  html+=`<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">关闭</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
+
+  // 立项质量
+  if (pq) {
+    html += `<h3 style="margin-top:16px">立项质量数据</h3><table><tbody>
+      <tr><td style="color:var(--muted)">预计营收</td><td>${fmtMoney(pq.estimated_revenue)}</td><td style="color:var(--muted)">项目利润率</td><td>${fmtPct(pq.project_profit_rate)}</td></tr>
+      <tr><td style="color:var(--muted)">项目周转(批次)</td><td>${pq.project_turnover}</td><td style="color:var(--muted)">销售周期(天)</td><td>${pq.sales_cycle}</td></tr>
+    </tbody></table>`;
+  }
+
+  // 履约质量
+  if (perf) {
+    html += `<h3 style="margin-top:16px">履约质量数据</h3><table><tbody>
+      <tr><td style="color:var(--muted)">年度营收</td><td>${fmtMoney(perf.annual_revenue)}</td><td style="color:var(--muted)">历史逾期金额</td><td>${fmtMoney(perf.historical_overdue_amount)}</td></tr>
+      <tr><td style="color:var(--muted)">项目总数</td><td>${perf.total_project_count}</td><td style="color:var(--muted)">逾期项目数</td><td>${perf.overdue_project_count}</td></tr>
+    </tbody></table>`;
+  }
+
+  html += `<div class="modal-actions">
+    <button class="btn btn-outline" onclick="closeModal()">关闭</button>
+    <button class="btn btn-primary" onclick="closeModal();showMerchantForm(${id})">编辑信息</button>
+  </div>`;
+  document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modal').classList.add('show');
 }
 
-function showFinancialForm(id){
-  let db=getDB();
-  let m=db.merchants.find(x=>x.merchant_id===id);
-  let html=`<h3>录入财务数据 - ${m.merchant_name}</h3>
-  <div class="form-row">
-    <div class="form-group"><label>年度 *</label><input id="f_year" type="number" value="2024"></div>
-    <div class="form-group"><label>季度</label><select id="f_quarter"><option value="">无</option><option value="1">Q1</option><option value="2">Q2</option><option value="3">Q3</option><option value="4">Q4</option></select></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>总资产</label><input id="f_ta" type="number" value="20000000"></div>
-    <div class="form-group"><label>总负债</label><input id="f_tl" type="number" value="8000000"></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>流动资产</label><input id="f_ca" type="number" value="10000000"></div>
-    <div class="form-group"><label>流动负债</label><input id="f_cl" type="number" value="5000000"></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>营业收入</label><input id="f_rev" type="number" value="15000000"></div>
-    <div class="form-group"><label>净利润</label><input id="f_np" type="number" value="2000000"></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>存货</label><input id="f_inv" type="number" value="3000000"></div>
-    <div class="form-group"><label>预付账款</label><input id="f_pp" type="number" value="500000"></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>经营现金流</label><input id="f_ocf" type="number" value="3000000"></div>
-    <div class="form-group"><label>净资产</label><input id="f_na" type="number" value="12000000"></div>
-  </div>
-  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveFinancial(${id})">保存</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
+// ======================================================================
+// 评级准入
+// ======================================================================
+function showRatingModal(id) {
+  let db = getDB();
+  let m = db.merchants.find(x => x.merchant_id === id);
+  let result = calculateScore(id);
+  let dimNames = {subject_quality:'主体资质', financial:'财务情况', project_quality:'立项质量', performance_quality:'履约质量'};
+  let activeDims = Object.keys(result.weights);
+
+  let html = `<h3>评级准入 - ${m.merchant_name}</h3>`;
+  
+  // 评分结果
+  html += `<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:16px;background:#f8fafc;border-radius:8px">
+    <div style="text-align:center">
+      <div style="font-size:12px;color:var(--muted)">准入静态分</div>
+      <div style="font-size:36px;font-weight:700;color:${result.qualified?'var(--green)':'var(--red)'}">${result.total_score}</div>
+    </div>
+    <div>${scoreBadge(result.rating)}</div>
+    <div style="color:var(--muted);font-size:13px">
+      场景: ${result.scenario==='FIRST'?'首次准入':'动态履约'}<br>
+      基础分: ${result.base_score} × 层级系数: ${result.level_coefficient}<br>
+      风控系数: ${result.risk_coefficient}
+    </div>
+  </div>`;
+
+  // 维度得分
+  for (let dim of ['subject_quality','financial','project_quality','performance_quality']) {
+    let score = result.dimension_scores[dim] || 0;
+    let active = activeDims.includes(dim);
+    let weight = result.weights[dim] || 0;
+    let pct = Math.min(score, 100);
+    let color = score >= 60 ? 'var(--green)' : 'var(--red)';
+    html += `<div class="dimension-score">
+      <span class="name">${dimNames[dim]}${active?'':' (未考核)'}${active?' '+Math.round(weight*100)+'%':''}</span>
+      <div class="bar"><div style="width:${pct}%;background:${active?color:'var(--border)'}"></div></div>
+      <span class="val">${active?score:'-'}</span>
+    </div>`;
+  }
+
+  // 准入结果
+  if (result.qualified) {
+    html += `<div style="background:#dcfce7;padding:12px;border-radius:8px;margin-top:16px;color:#166534">
+      <strong>准入通过</strong> — 准入静态分${result.total_score}分≥60分，可进入客商池
+    </div>`;
+  } else {
+    html += `<div style="background:#fee2e2;padding:12px;border-radius:8px;margin-top:16px;color:#991b1b">
+      <strong>准入不通过</strong> — 准入静态分${result.total_score}分<60分${m.is_credit_applied?'':'（无需授信客商可申请特批）'}
+    </div>`;
+  }
+
+  html += `<div class="modal-actions">
+    <button class="btn btn-outline" onclick="closeModal()">取消</button>
+    <button class="btn ${result.qualified?'btn-success':'btn-warning'}" onclick="confirmRating(${id})">${result.qualified?'确认准入':'强制准入'}</button>
+  </div>`;
+  document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modal').classList.add('show');
 }
 
-function saveFinancial(id){
-  let db=getDB();
-  let year=+val('f_year');
-  if(!year){toast('年度必填','error');return;}
-  let q=val('f_quarter');
-  let existing=db.financial.findIndex(f=>f.merchant_id===id&&f.period_year===year&&f.period_quarter==(q||null));
-  let data={merchant_id:id,period_year:year,period_quarter:q?+q:null,total_asset:+val('f_ta')||0,total_liability:+val('f_tl')||0,current_asset:+val('f_ca')||0,current_liability:+val('f_cl')||0,revenue:+val('f_rev')||0,net_profit:+val('f_np')||0,inventory:+val('f_inv')||0,prepay:+val('f_pp')||0,operating_cash_flow:+val('f_ocf')||0,net_asset:+val('f_na')||0};
-  if(existing>=0)db.financial[existing]=data;
-  else db.financial.push(data);
+function confirmRating(id) {
+  let db = getDB();
+  let result = calculateScore(id);
+  let snapId = db.nextSnapshotId++;
+  db.snapshots.push({
+    id: snapId, merchant_id: id,
+    total_score: result.total_score, rating: result.rating,
+    risk_coefficient: result.risk_coefficient,
+    base_score: result.base_score, level_coefficient: result.level_coefficient,
+    scenario: result.scenario, is_credit_applied: result.is_credit_applied,
+    dimension_scores: JSON.stringify(result.dimension_scores),
+    qualified: result.qualified,
+    created_at: nowStr()
+  });
   saveDB(db);
-  closeModal();toast('财务数据保存成功','success');renderMerchants();
+  closeModal();
+  toast('评级已确认，评级=' + result.rating + '，分数=' + result.total_score, 'success');
+  navigateTo('pool');
 }
 
-function showSubmitApproval(id){
-  let db=getDB();
-  let m=db.merchants.find(x=>x.merchant_id===id);
-  let result=calculateScore(id);
-  let html=`<h3>提交审批 - ${m.merchant_name}</h3>`;
-  
-  if(!result.qualified){
-    html+=`<div style="background:#fee2e2;padding:12px;border-radius:8px;margin-bottom:16px;color:#991b1b">
-      <strong>评分不合格</strong><br>总分: ${result.total_score} | 评级: ${result.rating}<br>不允许提交审批
+// ======================================================================
+// 财务数据（批量导入 + 单条录入）
+// ======================================================================
+function renderFinancial() {
+  let db = getDB();
+  let html = `<div class="card">
+    <div class="card-header">
+      <h3>财务数据管理</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="downloadFinancialTemplate()">下载导入模板</button>
+        <button class="btn btn-primary btn-sm" onclick="showFinancialForm()">+ 单条录入</button>
+      </div>
     </div>`;
-  }else{
-    html+=`<div style="background:#dcfce7;padding:12px;border-radius:8px;margin-bottom:16px;color:#166534">
-      <strong>评分合格</strong><br>总分: ${result.total_score} | 评级: ${result.rating} | 风控系数: ${result.risk_coefficient}
-    </div>`;
-    const dimNames={subject_quality:'主体资质',financial:'财务',project_quality:'项目质量',performance_quality:'履约质量'};
-    for(let dim of ALL_DIMENSIONS){
-      let score=result.dimension_scores[dim]||0;
-      html+=`<div class="dimension-score"><span class="name">${dimNames[dim]}</span><div class="bar"><div style="width:${Math.min(score,100)}%"></div></div><span class="val">${score}</span></div>`;
-    }
-    html+=`<div class="form-group" style="margin-top:16px"><label>申请备注</label><textarea id="a_remark" rows="3" placeholder="申请说明（可选）"></textarea></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="doSubmitApproval(${id})">提交审批</button></div>`;
-  }
-  html+=`<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">关闭</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
-  document.getElementById('modal').classList.add('show');
-}
 
-function doSubmitApproval(id){
-  let result=submitApproval(id,currentUser,val('a_remark'));
-  if(result.success){closeModal();toast(result.message,'success');navigateTo('approval');}
-  else toast(result.error||result.message,'error');
-}
+  // 批量导入区域
+  html += `<div class="import-area" id="finImportArea">
+    <p style="font-size:15px;font-weight:600;margin-bottom:4px">批量导入财务数据</p>
+    <p>点击选择CSV文件，或将Excel数据粘贴到下方文本框</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+      <input type="file" id="finFileInput" accept=".csv,.txt" style="display:none" onchange="handleFinFile(event)">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('finFileInput').click()">选择CSV文件</button>
+    </div>
+    <div style="margin-top:12px">
+      <textarea class="import-textarea" id="finPasteArea" placeholder="从Excel复制数据后粘贴到此处（需包含表头行）&#n;格式：客商名称,年度,季度,总资产,总负债,流动资产,流动负债,营业收入,净利润,存货,预付账款,经营现金流,净资产"></textarea>
+    </div>
+    <div style="margin-top:8px">
+      <button class="btn btn-success btn-sm" onclick="importFinancialFromPaste()">导入粘贴数据</button>
+    </div>
+  </div>`;
 
-// --- 审批工作流 ---
-function renderApproval(){
-  let db=getDB();
-  let role=ROLE_MAP[currentUser];
-  let html='<div class="card"><div class="card-header"><h3>';
-  
-  if(currentUser==='业务员小王'){
-    html+='我提交的审批';
-    let myOrders=db.orders.filter(o=>o.applicant===currentUser);
-    html+='</h3></div><table><thead><tr><th>客商</th><th>状态</th><th>评分</th><th>评级</th><th>申请时间</th><th>操作</th></tr></thead><tbody>';
-    myOrders.forEach(o=>{
-      let m=db.merchants.find(x=>x.merchant_id===o.merchant_id);
-      html+=`<tr><td>${m?m.merchant_name:'-'}</td><td>${statusBadge(o.status)}</td><td>${o.total_score||'-'}</td><td>${o.rating?scoreBadge(o.rating):'-'}</td><td>${o.apply_time}</td><td><button class="btn btn-outline btn-sm" onclick="showApprovalDetail(${o.id})">详情</button></td></tr>`;
-    });
-    if(myOrders.length===0)html+='<tr><td colspan="6" class="empty">暂无审批记录，请到客商管理中提交</td></tr>';
-  }else{
-    html+='我的待办任务';
-    let myTasks=db.tasks.filter(t=>t.assignee===currentUser&&t.task_status==='pending');
-    html+='</h3></div><table><thead><tr><th>客商</th><th>步骤</th><th>评分</th><th>评级</th><th>申请人</th><th>操作</th></tr></thead><tbody>';
-    myTasks.forEach(t=>{
-      let order=db.orders.find(o=>o.id===t.order_id);
-      if(!order)return;
-      let m=db.merchants.find(x=>x.merchant_id===order.merchant_id);
-      html+=`<tr><td>${m?m.merchant_name:'-'}</td><td>${order.current_step}</td><td>${order.total_score||'-'}</td><td>${order.rating?scoreBadge(order.rating):'-'}</td><td>${order.applicant}</td><td>
-        <button class="btn btn-success btn-sm" onclick="doApprove(${t.id})">通过</button>
-        <button class="btn btn-danger btn-sm" onclick="doReject(${t.id})">驳回</button>
-      </td></tr>`;
-    });
-    if(myTasks.length===0)html+='<tr><td colspan="6" class="empty">暂无待办任务</td></tr>';
-  }
-  html+='</tbody></table></div>';
-  document.getElementById('view-approval').innerHTML=html;
-}
-
-function doApprove(taskId){
-  let html=`<h3>审批通过</h3>
-  <div class="form-group"><label>审批意见</label><textarea id="t_comment" rows="3" placeholder="请输入审批意见"></textarea></div>
-  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-success" onclick="confirmApprove(${taskId})">确认通过</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
-  document.getElementById('modal').classList.add('show');
-}
-
-function confirmApprove(taskId){
-  let result=approveTask(taskId,currentUser,val('t_comment'));
-  if(result.success){closeModal();toast(result.message,'success');renderApproval();}
-  else toast(result.error,'error');
-}
-
-function doReject(taskId){
-  let html=`<h3>审批驳回</h3>
-  <div class="form-group"><label>驳回原因</label><textarea id="t_comment" rows="3" placeholder="请输入驳回原因"></textarea></div>
-  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-danger" onclick="confirmReject(${taskId})">确认驳回</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
-  document.getElementById('modal').classList.add('show');
-}
-
-function confirmReject(taskId){
-  let result=rejectTask(taskId,currentUser,val('t_comment'));
-  if(result.success){closeModal();toast(result.message,'success');renderApproval();}
-  else toast(result.error,'error');
-}
-
-function showApprovalDetail(orderId){
-  let db=getDB();
-  let order=db.orders.find(o=>o.id===orderId);
-  if(!order)return;
-  let m=db.merchants.find(x=>x.merchant_id===order.merchant_id);
-  let tasks=db.tasks.filter(t=>t.order_id===orderId).sort((a,b)=>(a.id-b.id));
-  let dimScores={};
-  try{dimScores=JSON.parse(order.dimension_scores||'{}');}catch(e){}
-  
-  let html=`<h3>审批详情 - ${m?m.merchant_name:''}</h3>
-  <table><tbody>
-    <tr><td style="width:100px;color:var(--muted)">审批单号</td><td>#${order.id}</td></tr>
-    <tr><td style="color:var(--muted)">申请人</td><td>${order.applicant}</td></tr>
-    <tr><td style="color:var(--muted)">申请时间</td><td>${order.apply_time}</td></tr>
-    <tr><td style="color:var(--muted)">当前状态</td><td>${statusBadge(order.status)}</td></tr>
-    <tr><td style="color:var(--muted)">当前步骤</td><td>${order.current_step}</td></tr>
-    <tr><td style="color:var(--muted)">评分</td><td>${order.total_score||'-'} ${order.rating?scoreBadge(order.rating):''}</td></tr>
-    ${order.remark?`<tr><td style="color:var(--muted)">备注</td><td>${order.remark}</td></tr>`:''}
-  </tbody></table>`;
-  
-  const dimNames={subject_quality:'主体资质',financial:'财务',project_quality:'项目质量',performance_quality:'履约质量'};
-  if(Object.keys(dimScores).length>0){
-    html+='<h3 style="margin-top:16px">维度得分</h3>';
-    for(let dim of ALL_DIMENSIONS){
-      let score=dimScores[dim]||0;
-      html+=`<div class="dimension-score"><span class="name">${dimNames[dim]}</span><div class="bar"><div style="width:${Math.min(score,100)}%"></div></div><span class="val">${score}</span></div>`;
-    }
-  }
-  
-  html+='<h3 style="margin-top:16px">审批流程</h3><ul class="timeline">';
-  const roleNames={dept_head:'部门负责人',market:'市场部',compliance:'法务部',finance:'财务部',executive:'公司领导'};
-  tasks.forEach(t=>{
-    let dotClass=t.task_status==='done'?'done':t.task_status==='cancelled'?'cancelled':'pending';
-    let actionText=t.action==='approve'?'通过':t.action==='reject'?'驳回':'待处理';
-    html+=`<li class="timeline-item"><div class="timeline-dot ${dotClass}"></div><div class="timeline-content">
-      <div class="role">${roleNames[t.role_type]||t.role_type} - ${t.assignee} <span class="badge ${t.action==='approve'?'badge-green':t.action==='reject'?'badge-red':'badge-gray'} btn-sm">${actionText}</span></div>
-      ${t.comment?`<div class="comment">${t.comment}</div>`:''}
-      <div class="time">${t.handled_at||t.created_at}</div>
-    </div></li>`;
+  // 已有数据列表
+  html += `<table><thead><tr><th>客商名称</th><th>年度</th><th>季度</th><th>总资产</th><th>总负债</th><th>营收</th><th>净利润</th><th>操作</th></tr></thead><tbody>`;
+  db.financial.sort((a,b) => b.period_year - a.period_year).forEach(f => {
+    let m = db.merchants.find(x => x.merchant_id === f.merchant_id);
+    html += `<tr>
+      <td>${m?m.merchant_name:'(已删除)'}</td>
+      <td>${f.period_year}</td><td>${f.period_quarter?'Q'+f.period_quarter:'-'}</td>
+      <td>${fmtMoney(f.total_asset)}</td><td>${fmtMoney(f.total_liability)}</td>
+      <td>${fmtMoney(f.revenue)}</td><td>${fmtMoney(f.net_profit)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="showFinancialForm(${f.merchant_id},${f.period_year},'${f.period_quarter||''}')">编辑</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteFinancial(${f.merchant_id},${f.period_year},'${f.period_quarter||''}')">删除</button></td>
+    </tr>`;
   });
-  html+='</ul>';
-  
-  html+=`<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">关闭</button></div>`;
-  document.getElementById('modalContent').innerHTML=html;
+  if (db.financial.length === 0) html += '<tr><td colspan="8" class="empty">暂无财务数据</td></tr>';
+  html += `</tbody></table></div>`;
+  document.getElementById('view-financial').innerHTML = html;
+
+  // 拖拽支持
+  let area = document.getElementById('finImportArea');
+  area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+  area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+  area.addEventListener('drop', e => {
+    e.preventDefault(); area.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) handleFinFile({target: {files: e.dataTransfer.files}});
+  });
+}
+
+function downloadFinancialTemplate() {
+  let headers = ['客商名称','年度','季度','总资产','总负债','流动资产','流动负债','营业收入','净利润','存货','预付账款','经营现金流','净资产'];
+  let sample = ['深圳市宏远科技有限公司','2024','4','200000000','80000000','100000000','50000000','150000000','20000000','30000000','5000000','30000000','120000000'];
+  downloadCSV('财务数据导入模板.csv', headers, sample);
+  toast('模板已下载', 'info');
+}
+
+function handleFinFile(event) {
+  let file = event.target.files[0];
+  if (!file) return;
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    importFinancialData(e.target.result);
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function importFinancialFromPaste() {
+  let text = val('finPasteArea');
+  if (!text.trim()) { toast('请先粘贴数据', 'error'); return; }
+  importFinancialData(text);
+}
+
+function importFinancialData(text) {
+  let rows = parseDelimited(text);
+  if (rows.length === 0) { toast('未解析到有效数据', 'error'); return; }
+  let db = getDB();
+  let success = 0, fail = 0;
+  let errors = [];
+  rows.forEach((row, idx) => {
+    let name = row['客商名称'] || row['merchant_name'] || '';
+    let m = db.merchants.find(x => x.merchant_name === name.trim());
+    if (!m) {
+      fail++; errors.push(`第${idx+2}行: 客商"${name}"不存在`);
+      return;
+    }
+    let year = parseInt(row['年度'] || row['period_year']);
+    if (!year) { fail++; errors.push(`第${idx+2}行: 年度无效`); return; }
+    let quarter = row['季度'] || row['period_quarter'] || '';
+    quarter = quarter.toString().replace('Q', '').trim();
+    let q = quarter ? parseInt(quarter) : null;
+    let data = {
+      merchant_id: m.merchant_id, period_year: year, period_quarter: q,
+      total_asset: +(row['总资产']||0), total_liability: +(row['总负债']||0),
+      current_asset: +(row['流动资产']||0), current_liability: +(row['流动负债']||0),
+      revenue: +(row['营业收入']||0), net_profit: +(row['净利润']||0),
+      inventory: +(row['存货']||0), prepay: +(row['预付账款']||0),
+      operating_cash_flow: +(row['经营现金流']||0), net_asset: +(row['净资产']||0),
+      created_at: nowStr()
+    };
+    let existing = db.financial.findIndex(f => f.merchant_id === m.merchant_id && f.period_year === year && (f.period_quarter||null) === (q||null));
+    if (existing >= 0) db.financial[existing] = data;
+    else db.financial.push(data);
+    success++;
+  });
+  saveDB(db);
+  toast(`导入完成: 成功${success}条, 失败${fail}条`, success > 0 ? 'success' : 'error');
+  if (errors.length > 0) console.log('导入错误:', errors);
+  renderFinancial();
+}
+
+function showFinancialForm(merchantId, year, quarter) {
+  let db = getDB();
+  let existing = null;
+  if (merchantId && year) {
+    existing = db.financial.find(f => f.merchant_id === merchantId && f.period_year === year && (f.period_quarter||'') === (quarter||''));
+  }
+  let m = merchantId ? db.merchants.find(x => x.merchant_id === merchantId) : null;
+  let html = `<h3>${existing?'编辑':'录入'}财务数据${m?' - '+m.merchant_name:''}</h3>
+  <div class="form-row">
+    <div class="form-group"><label>客商 *</label>
+      <select id="f_merchant">${db.merchants.map(x => `<option value="${x.merchant_id}" ${merchantId===x.merchant_id?'selected':''}>${x.merchant_name}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label>年度 *</label><input id="f_year" type="number" value="${existing?existing.period_year:2024}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>季度</label><select id="f_quarter">
+      <option value="" ${!existing||!existing.period_quarter?'selected':''}>无</option>
+      <option value="1" ${existing&&existing.period_quarter===1?'selected':''}>Q1</option>
+      <option value="2" ${existing&&existing.period_quarter===2?'selected':''}>Q2</option>
+      <option value="3" ${existing&&existing.period_quarter===3?'selected':''}>Q3</option>
+      <option value="4" ${existing&&existing.period_quarter===4?'selected':''}>Q4</option>
+    </select></div>
+    <div class="form-group"><label>总资产</label><input id="f_ta" type="number" value="${existing?existing.total_asset:0}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>总负债</label><input id="f_tl" type="number" value="${existing?existing.total_liability:0}"></div>
+    <div class="form-group"><label>流动资产</label><input id="f_ca" type="number" value="${existing?existing.current_asset:0}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>流动负债</label><input id="f_cl" type="number" value="${existing?existing.current_liability:0}"></div>
+    <div class="form-group"><label>营业收入</label><input id="f_rev" type="number" value="${existing?existing.revenue:0}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>净利润</label><input id="f_np" type="number" value="${existing?existing.net_profit:0}"></div>
+    <div class="form-group"><label>存货</label><input id="f_inv" type="number" value="${existing?existing.inventory:0}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>预付账款</label><input id="f_pp" type="number" value="${existing?existing.prepay:0}"></div>
+    <div class="form-group"><label>经营现金流</label><input id="f_ocf" type="number" value="${existing?existing.operating_cash_flow:0}"></div>
+  </div>
+  <div class="form-group"><label>净资产</label><input id="f_na" type="number" value="${existing?existing.net_asset:0}"></div>
+  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveFinancial()">保存</button></div>`;
+  document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modal').classList.add('show');
 }
 
-// --- 审批历史 ---
-function renderHistory(){
-  let db=getDB();
-  let orders=db.orders.sort((a,b)=>b.id-a.id);
-  let html='<div class="card"><div class="card-header"><h3>审批历史</h3></div><table><thead><tr><th>单号</th><th>客商</th><th>申请人</th><th>状态</th><th>评分</th><th>评级</th><th>申请时间</th><th>操作</th></tr></thead><tbody>';
-  orders.forEach(o=>{
-    let m=db.merchants.find(x=>x.merchant_id===o.merchant_id);
-    html+=`<tr><td>#${o.id}</td><td>${m?m.merchant_name:'-'}</td><td>${o.applicant}</td><td>${statusBadge(o.status)}</td><td>${o.total_score||'-'}</td><td>${o.rating?scoreBadge(o.rating):'-'}</td><td>${o.apply_time}</td><td><button class="btn btn-outline btn-sm" onclick="showApprovalDetail(${o.id})">详情</button></td></tr>`;
+function saveFinancial() {
+  let db = getDB();
+  let mid = +val('f_merchant');
+  let year = +val('f_year');
+  if (!mid || !year) { toast('客商和年度必填', 'error'); return; }
+  let q = val('f_quarter');
+  let data = {
+    merchant_id: mid, period_year: year, period_quarter: q ? +q : null,
+    total_asset: +val('f_ta')||0, total_liability: +val('f_tl')||0,
+    current_asset: +val('f_ca')||0, current_liability: +val('f_cl')||0,
+    revenue: +val('f_rev')||0, net_profit: +val('f_np')||0,
+    inventory: +val('f_inv')||0, prepay: +val('f_pp')||0,
+    operating_cash_flow: +val('f_ocf')||0, net_asset: +val('f_na')||0,
+    created_at: nowStr()
+  };
+  let existing = db.financial.findIndex(f => f.merchant_id === mid && f.period_year === year && (f.period_quarter||null) === (data.period_quarter||null));
+  if (existing >= 0) { db.financial[existing] = data; toast('财务数据已更新', 'success'); }
+  else { db.financial.push(data); toast('财务数据保存成功', 'success'); }
+  // 更新客商修改时间
+  let m = db.merchants.find(x => x.merchant_id === mid);
+  if (m) m.updated_at = nowStr();
+  saveDB(db);
+  closeModal();
+  renderFinancial();
+}
+
+function deleteFinancial(mid, year, quarter) {
+  if (!confirm('确认删除该条财务数据？')) return;
+  let db = getDB();
+  db.financial = db.financial.filter(f => !(f.merchant_id === mid && f.period_year === year && (f.period_quarter||'') === (quarter||'')));
+  saveDB(db);
+  toast('已删除', 'success');
+  renderFinancial();
+}
+
+// ======================================================================
+// 立项质量数据录入
+// ======================================================================
+function renderProject() {
+  let db = getDB();
+  let html = `<div class="card">
+    <div class="card-header">
+      <h3>立项质量数据</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="downloadProjectTemplate()">下载模板</button>
+        <button class="btn btn-primary btn-sm" onclick="showProjectForm()">+ 录入数据</button>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:12px">立项质量维度占比45%，包含项目收益（预计营收、项目利润、项目周转）和项目风险（市场行情、品类属性、销售周期、合同文本、货权控制）</p>`;
+
+  // 批量导入
+  html += `<div class="import-area" id="projImportArea">
+    <p style="font-size:14px;font-weight:600">批量导入立项质量数据</p>
+    <input type="file" id="projFileInput" accept=".csv,.txt" style="display:none" onchange="handleProjFile(event)">
+    <button class="btn btn-primary btn-sm" onclick="document.getElementById('projFileInput').click()">选择CSV文件</button>
+    <div style="margin-top:8px"><textarea class="import-textarea" id="projPasteArea" placeholder="从Excel粘贴数据（含表头）&#n;格式：客商名称,预计营收,项目利润率,项目周转批次,市场行情,品类属性,销售周期天数,合同文本评分,货权控制评分"></textarea></div>
+    <button class="btn btn-success btn-sm" style="margin-top:8px" onclick="importProjectFromPaste()">导入粘贴数据</button>
+  </div>`;
+
+  // 数据列表
+  html += `<table><thead><tr><th>客商名称</th><th>预计营收</th><th>项目利润率</th><th>周转批次</th><th>销售周期</th><th>合同文本</th><th>货权控制</th><th>操作</th></tr></thead><tbody>`;
+  db.project_quality.forEach(p => {
+    let m = db.merchants.find(x => x.merchant_id === p.merchant_id);
+    let contractText = ['完全采纳','基本采纳','重大分歧'][p.contract_terms] || '-';
+    let warehouseText = ['实际控制','客户自理齐全','仅有货转'][p.warehouse_control] || '-';
+    html += `<tr>
+      <td>${m?m.merchant_name:'(已删除)'}</td>
+      <td>${fmtMoney(p.estimated_revenue)}</td><td>${fmtPct(p.project_profit_rate)}</td>
+      <td>${p.project_turnover}</td><td>${p.sales_cycle}天</td>
+      <td>${contractText}</td><td>${warehouseText}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="showProjectForm(${p.merchant_id})">编辑</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteProject(${p.merchant_id})">删除</button></td>
+    </tr>`;
   });
-  if(orders.length===0)html+='<tr><td colspan="8" class="empty">暂无审批记录</td></tr>';
-  html+='</tbody></table></div>';
-  document.getElementById('view-history').innerHTML=html;
+  if (db.project_quality.length === 0) html += '<tr><td colspan="8" class="empty">暂无立项质量数据</td></tr>';
+  html += `</tbody></table></div>`;
+  document.getElementById('view-project').innerHTML = html;
 }
 
-// --- 工具函数 ---
-function val(id){let el=document.getElementById(id);return el?el.value:'';}
+function downloadProjectTemplate() {
+  let headers = ['客商名称','预计营收','项目利润率','项目周转批次','市场行情','品类属性','销售周期天数','合同文本评分','货权控制评分'];
+  let sample = ['深圳市宏远科技有限公司','20000000','0.08','5','2','0','30','1','0'];
+  downloadCSV('立项质量数据导入模板.csv', headers, sample);
+  toast('模板已下载', 'info');
+}
 
-function closeModal(){document.getElementById('modal').classList.remove('show');}
+function handleProjFile(event) {
+  let file = event.target.files[0];
+  if (!file) return;
+  let reader = new FileReader();
+  reader.onload = e => importProjectData(e.target.result);
+  reader.readAsText(file, 'UTF-8');
+}
 
-function navigateTo(view){
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`[data-view="${view}"]`).classList.add('active');
-  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
-  document.getElementById('view-'+view).classList.add('active');
-  const titles={dashboard:'系统看板',merchants:'客商管理',approval:'审批工作流',history:'审批历史'};
-  document.getElementById('pageTitle').textContent=titles[view];
-  let badge=document.getElementById('topBadge');
-  if(view==='approval'&&currentUser!=='业务员小王'){
-    let db=getDB();
-    let count=db.tasks.filter(t=>t.assignee===currentUser&&t.task_status==='pending').length;
-    badge.textContent=count+' 个待办';
-    badge.className='badge '+(count>0?'badge-orange':'badge-gray');
-  }else{
-    badge.textContent=currentUser;
-    badge.className='badge badge-blue';
+function importProjectFromPaste() {
+  let text = val('projPasteArea');
+  if (!text.trim()) { toast('请先粘贴数据', 'error'); return; }
+  importProjectData(text);
+}
+
+function importProjectData(text) {
+  let rows = parseDelimited(text);
+  if (rows.length === 0) { toast('未解析到有效数据', 'error'); return; }
+  let db = getDB();
+  let success = 0, fail = 0;
+  rows.forEach((row, idx) => {
+    let name = row['客商名称'] || '';
+    let m = db.merchants.find(x => x.merchant_name === name.trim());
+    if (!m) { fail++; return; }
+    let data = {
+      merchant_id: m.merchant_id,
+      estimated_revenue: +(row['预计营收']||0),
+      project_profit_rate: +(row['项目利润率']||0),
+      project_turnover: +(row['项目周转批次']||0),
+      market_condition: +(row['市场行情']||0),
+      product_category: +(row['品类属性']||0),
+      sales_cycle: +(row['销售周期天数']||0),
+      contract_terms: +(row['合同文本评分']||0),
+      warehouse_control: +(row['货权控制评分']||0),
+      created_at: nowStr()
+    };
+    let existing = db.project_quality.findIndex(p => p.merchant_id === m.merchant_id);
+    if (existing >= 0) db.project_quality[existing] = data;
+    else db.project_quality.push(data);
+    success++;
+  });
+  saveDB(db);
+  toast(`导入完成: 成功${success}条, 失败${fail}条`, success > 0 ? 'success' : 'error');
+  renderProject();
+}
+
+function showProjectForm(merchantId) {
+  let db = getDB();
+  let existing = merchantId ? db.project_quality.find(p => p.merchant_id === merchantId) : null;
+  let m = merchantId ? db.merchants.find(x => x.merchant_id === merchantId) : null;
+  let html = `<h3>${existing?'编辑':'录入'}立项质量数据${m?' - '+m.merchant_name:''}</h3>
+  <div class="form-group"><label>客商 *</label>
+    <select id="p_merchant">${db.merchants.map(x => `<option value="${x.merchant_id}" ${merchantId===x.merchant_id?'selected':''}>${x.merchant_name}</option>`).join('')}</select>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>预计营收（元）</label><input id="p_revenue" type="number" value="${existing?existing.estimated_revenue:0}" placeholder="项目预计营收"></div>
+    <div class="form-group"><label>项目利润率（0-1）</label><input id="p_profit" type="number" step="0.001" value="${existing?existing.project_profit_rate:0.05}" placeholder="如0.08表示8%"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>项目周转批次</label><input id="p_turnover" type="number" step="0.1" value="${existing?existing.project_turnover:3}" placeholder="预计营收÷运营资金"></div>
+    <div class="form-group"><label>销售周期（天）</label><input id="p_cycle" type="number" value="${existing?existing.sales_cycle:30}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>市场行情</label><select id="p_market">
+      <option value="0" ${!existing||existing.market_condition===0?'selected':''}>无参考（60分）</option>
+      <option value="1" ${existing&&existing.market_condition===1?'selected':''}>波动（80分）</option>
+      <option value="2" ${existing&&existing.market_condition===2?'selected':''}>平稳（100分）</option>
+    </select></div>
+    <div class="form-group"><label>品类属性</label><select id="p_category">
+      <option value="0" ${!existing||existing.product_category===0?'selected':''}>传统品类（100分）</option>
+      <option value="1" ${existing&&existing.product_category===1?'selected':''}>新兴品类（80分）</option>
+    </select></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>合同文本评分</label><select id="p_contract">
+      <option value="0" ${!existing||existing.contract_terms===0?'selected':''}>完全采纳修改意见（100分）</option>
+      <option value="1" ${existing&&existing.contract_terms===1?'selected':''}>基本采纳，关键条款一致（80分）</option>
+      <option value="2" ${existing&&existing.contract_terms===2?'selected':''}>重大分歧未采纳（60分）</option>
+    </select></div>
+    <div class="form-group"><label>货权控制评分</label><select id="p_warehouse">
+      <option value="0" ${!existing||existing.warehouse_control===0?'selected':''}>实际控制货权（100分）</option>
+      <option value="1" ${existing&&existing.warehouse_control===1?'selected':''}>客户自理运输但凭证齐全（80分）</option>
+      <option value="2" ${existing&&existing.warehouse_control===2?'selected':''}>仅有货转无运输单据（60分）</option>
+    </select></div>
+  </div>
+  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveProject()">保存</button></div>`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modal').classList.add('show');
+}
+
+function saveProject() {
+  let db = getDB();
+  let mid = +val('p_merchant');
+  if (!mid) { toast('请选择客商', 'error'); return; }
+  let data = {
+    merchant_id: mid,
+    estimated_revenue: +val('p_revenue')||0,
+    project_profit_rate: +val('p_profit')||0,
+    project_turnover: +val('p_turnover')||0,
+    market_condition: +val('p_market'),
+    product_category: +val('p_category'),
+    sales_cycle: +val('p_cycle')||0,
+    contract_terms: +val('p_contract'),
+    warehouse_control: +val('p_warehouse'),
+    created_at: nowStr()
+  };
+  let existing = db.project_quality.findIndex(p => p.merchant_id === mid);
+  if (existing >= 0) { db.project_quality[existing] = data; toast('立项质量数据已更新', 'success'); }
+  else { db.project_quality.push(data); toast('立项质量数据保存成功', 'success'); }
+  let m = db.merchants.find(x => x.merchant_id === mid);
+  if (m) m.updated_at = nowStr();
+  saveDB(db);
+  closeModal();
+  renderProject();
+}
+
+function deleteProject(mid) {
+  if (!confirm('确认删除该条立项质量数据？')) return;
+  let db = getDB();
+  db.project_quality = db.project_quality.filter(p => p.merchant_id !== mid);
+  saveDB(db);
+  toast('已删除', 'success');
+  renderProject();
+}
+
+// ======================================================================
+// 履约质量数据录入
+// ======================================================================
+function renderPerformance() {
+  let db = getDB();
+  let html = `<div class="card">
+    <div class="card-header">
+      <h3>履约质量数据</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="downloadPerfTemplate()">下载模板</button>
+        <button class="btn btn-primary btn-sm" onclick="showPerfForm()">+ 录入数据</button>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:12px">履约质量维度占比45%，包含年度情况（年度营收、逾期规模）和历史逾期（首次逾期率、逾期预警率、清收情况）</p>`;
+
+  // 批量导入
+  html += `<div class="import-area" id="perfImportArea">
+    <p style="font-size:14px;font-weight:600">批量导入履约质量数据</p>
+    <input type="file" id="perfFileInput" accept=".csv,.txt" style="display:none" onchange="handlePerfFile(event)">
+    <button class="btn btn-primary btn-sm" onclick="document.getElementById('perfFileInput').click()">选择CSV文件</button>
+    <div style="margin-top:8px"><textarea class="import-textarea" id="perfPasteArea" placeholder="从Excel粘贴数据（含表头）&#n;格式：客商名称,年度营收,历史逾期金额,项目总数,逾期项目数,总批次,逾期60天批次,已清收金额"></textarea></div>
+    <button class="btn btn-success btn-sm" style="margin-top:8px" onclick="importPerfFromPaste()">导入粘贴数据</button>
+  </div>`;
+
+  // 数据列表
+  html += `<table><thead><tr><th>客商名称</th><th>年度营收</th><th>历史逾期金额</th><th>项目总数</th><th>逾期项目</th><th>逾期60天批次</th><th>已清收金额</th><th>操作</th></tr></thead><tbody>`;
+  db.performance_quality.forEach(p => {
+    let m = db.merchants.find(x => x.merchant_id === p.merchant_id);
+    html += `<tr>
+      <td>${m?m.merchant_name:'(已删除)'}</td>
+      <td>${fmtMoney(p.annual_revenue)}</td><td>${fmtMoney(p.historical_overdue_amount)}</td>
+      <td>${p.total_project_count||0}</td><td>${p.overdue_project_count||0}</td>
+      <td>${p.overdue_60days_batch_count||0}/${p.total_batch_count||0}</td><td>${fmtMoney(p.recovered_amount||0)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="showPerfForm(${p.merchant_id})">编辑</button>
+      <button class="btn btn-danger btn-sm" onclick="deletePerf(${p.merchant_id})">删除</button></td>
+    </tr>`;
+  });
+  if (db.performance_quality.length === 0) html += '<tr><td colspan="8" class="empty">暂无履约质量数据</td></tr>';
+  html += `</tbody></table></div>`;
+  document.getElementById('view-performance').innerHTML = html;
+}
+
+function downloadPerfTemplate() {
+  let headers = ['客商名称','年度营收','历史逾期金额','项目总数','逾期项目数','总批次','逾期60天批次','已清收金额'];
+  let sample = ['深圳市宏远科技有限公司','150000000','0','10','0','50','0','0'];
+  downloadCSV('履约质量数据导入模板.csv', headers, sample);
+  toast('模板已下载', 'info');
+}
+
+function handlePerfFile(event) {
+  let file = event.target.files[0];
+  if (!file) return;
+  let reader = new FileReader();
+  reader.onload = e => importPerfData(e.target.result);
+  reader.readAsText(file, 'UTF-8');
+}
+
+function importPerfFromPaste() {
+  let text = val('perfPasteArea');
+  if (!text.trim()) { toast('请先粘贴数据', 'error'); return; }
+  importPerfData(text);
+}
+
+function importPerfData(text) {
+  let rows = parseDelimited(text);
+  if (rows.length === 0) { toast('未解析到有效数据', 'error'); return; }
+  let db = getDB();
+  let success = 0, fail = 0;
+  rows.forEach(row => {
+    let name = row['客商名称'] || '';
+    let m = db.merchants.find(x => x.merchant_name === name.trim());
+    if (!m) { fail++; return; }
+    let data = {
+      merchant_id: m.merchant_id,
+      annual_revenue: +(row['年度营收']||0),
+      historical_overdue_amount: +(row['历史逾期金额']||0),
+      total_project_count: +(row['项目总数']||0),
+      overdue_project_count: +(row['逾期项目数']||0),
+      total_batch_count: +(row['总批次']||0),
+      overdue_60days_batch_count: +(row['逾期60天批次']||0),
+      recovered_amount: +(row['已清收金额']||0),
+      created_at: nowStr()
+    };
+    let existing = db.performance_quality.findIndex(p => p.merchant_id === m.merchant_id);
+    if (existing >= 0) db.performance_quality[existing] = data;
+    else db.performance_quality.push(data);
+    success++;
+  });
+  saveDB(db);
+  toast(`导入完成: 成功${success}条, 失败${fail}条`, success > 0 ? 'success' : 'error');
+  renderPerformance();
+}
+
+function showPerfForm(merchantId) {
+  let db = getDB();
+  let existing = merchantId ? db.performance_quality.find(p => p.merchant_id === merchantId) : null;
+  let m = merchantId ? db.merchants.find(x => x.merchant_id === merchantId) : null;
+  let html = `<h3>${existing?'编辑':'录入'}履约质量数据${m?' - '+m.merchant_name:''}</h3>
+  <div class="form-group"><label>客商 *</label>
+    <select id="pf_merchant">${db.merchants.map(x => `<option value="${x.merchant_id}" ${merchantId===x.merchant_id?'selected':''}>${x.merchant_name}</option>`).join('')}</select>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>年度营收（元）</label><input id="pf_rev" type="number" value="${existing?existing.annual_revenue:0}" placeholder="上一年度与公司累计营收"></div>
+    <div class="form-group"><label>历史逾期总金额</label><input id="pf_overdue" type="number" value="${existing?existing.historical_overdue_amount:0}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>项目总数</label><input id="pf_total_proj" type="number" value="${existing?existing.total_project_count||0:0}"></div>
+    <div class="form-group"><label>首次逾期项目数</label><input id="pf_overdue_proj" type="number" value="${existing?existing.overdue_project_count||0:0}"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>总批次</label><input id="pf_total_batch" type="number" value="${existing?existing.total_batch_count||0:0}"></div>
+    <div class="form-group"><label>逾期超60天批次数</label><input id="pf_overdue_batch" type="number" value="${existing?existing.overdue_60days_batch_count||0:0}"></div>
+  </div>
+  <div class="form-group"><label>已清收金额</label><input id="pf_recovered" type="number" value="${existing?existing.recovered_amount||0:0}" placeholder="年度已完成清收总金额"></div>
+  <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="savePerf()">保存</button></div>`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modal').classList.add('show');
+}
+
+function savePerf() {
+  let db = getDB();
+  let mid = +val('pf_merchant');
+  if (!mid) { toast('请选择客商', 'error'); return; }
+  let data = {
+    merchant_id: mid,
+    annual_revenue: +val('pf_rev')||0,
+    historical_overdue_amount: +val('pf_overdue')||0,
+    total_project_count: +val('pf_total_proj')||0,
+    overdue_project_count: +val('pf_overdue_proj')||0,
+    total_batch_count: +val('pf_total_batch')||0,
+    overdue_60days_batch_count: +val('pf_overdue_batch')||0,
+    recovered_amount: +val('pf_recovered')||0,
+    created_at: nowStr()
+  };
+  let existing = db.performance_quality.findIndex(p => p.merchant_id === mid);
+  if (existing >= 0) { db.performance_quality[existing] = data; toast('履约质量数据已更新', 'success'); }
+  else { db.performance_quality.push(data); toast('履约质量数据保存成功', 'success'); }
+  let m = db.merchants.find(x => x.merchant_id === mid);
+  if (m) m.updated_at = nowStr();
+  saveDB(db);
+  closeModal();
+  renderPerformance();
+}
+
+function deletePerf(mid) {
+  if (!confirm('确认删除该条履约质量数据？')) return;
+  let db = getDB();
+  db.performance_quality = db.performance_quality.filter(p => p.merchant_id !== mid);
+  saveDB(db);
+  toast('已删除', 'success');
+  renderPerformance();
+}
+
+// ======================================================================
+// 客商池看板
+// ======================================================================
+let poolFilter = {rating: '', level: '', credit: '', sort: 'score_desc'};
+
+function renderPool() {
+  let db = getDB();
+  let snapshots = db.snapshots.slice();
+
+  // 筛选
+  if (poolFilter.rating) snapshots = snapshots.filter(s => s.rating === poolFilter.rating);
+  if (poolFilter.level) {
+    snapshots = snapshots.filter(s => {
+      let m = db.merchants.find(x => x.merchant_id === s.merchant_id);
+      return m && (m.merchant_level || 'other') === poolFilter.level;
+    });
   }
-  ({dashboard:renderDashboard,merchants:renderMerchants,approval:renderApproval,history:renderHistory})[view]();
+  if (poolFilter.credit) {
+    let needCredit = poolFilter.credit === 'true';
+    snapshots = snapshots.filter(s => {
+      let m = db.merchants.find(x => x.merchant_id === s.merchant_id);
+      return m && !!m.is_credit_applied === needCredit;
+    });
+  }
+
+  // 排序
+  if (poolFilter.sort === 'score_desc') snapshots.sort((a,b) => b.total_score - a.total_score);
+  else if (poolFilter.sort === 'score_asc') snapshots.sort((a,b) => a.total_score - b.total_score);
+  else if (poolFilter.sort === 'time_desc') snapshots.sort((a,b) => (b.id - a.id));
+
+  let qualified = snapshots.filter(s => s.rating !== 'UNQUALIFIED').length;
+  let avgScore = snapshots.length > 0 ? Math.round(snapshots.reduce((sum,s) => sum + s.total_score, 0) / snapshots.length * 100) / 100 : 0;
+
+  let html = `
+  <div class="stat-grid">
+    <div class="stat-card"><div class="label">客商池总数</div><div class="value">${snapshots.length}</div><div class="sub">已评级客商</div></div>
+    <div class="stat-card"><div class="label">准入通过</div><div class="value" style="color:var(--green)">${qualified}</div><div class="sub">评级≥60分</div></div>
+    <div class="stat-card"><div class="label">准入不通过</div><div class="value" style="color:var(--red)">${snapshots.length - qualified}</div><div class="sub">评级<60分</div></div>
+    <div class="stat-card"><div class="label">平均分</div><div class="value" style="color:var(--primary)">${avgScore}</div><div class="sub">准入静态分均值</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>客商池</h3></div>
+    <div class="filter-bar">
+      <select id="filter_rating" onchange="poolFilter.rating=this.value;renderPool()">
+        <option value="">全部评级</option>
+        <option value="AAA" ${poolFilter.rating==='AAA'?'selected':''}>AAA</option>
+        <option value="AA" ${poolFilter.rating==='AA'?'selected':''}>AA</option>
+        <option value="A" ${poolFilter.rating==='A'?'selected':''}>A</option>
+        <option value="BBB" ${poolFilter.rating==='BBB'?'selected':''}>BBB</option>
+        <option value="BB" ${poolFilter.rating==='BB'?'selected':''}>BB</option>
+        <option value="B" ${poolFilter.rating==='B'?'selected':''}>B</option>
+        <option value="UNQUALIFIED" ${poolFilter.rating==='UNQUALIFIED'?'selected':''}>不合格</option>
+      </select>
+      <select id="filter_level" onchange="poolFilter.level=this.value;renderPool()">
+        <option value="">全部层级</option>
+        <option value="strategic" ${poolFilter.level==='strategic'?'selected':''}>战略层</option>
+        <option value="core" ${poolFilter.level==='core'?'selected':''}>核心层</option>
+        <option value="standard" ${poolFilter.level==='standard'?'selected':''}>标准层</option>
+        <option value="other" ${poolFilter.level==='other'?'selected':''}>其他</option>
+      </select>
+      <select id="filter_credit" onchange="poolFilter.credit=this.value;renderPool()">
+        <option value="">全部类型</option>
+        <option value="true" ${poolFilter.credit==='true'?'selected':''}>需授信</option>
+        <option value="false" ${poolFilter.credit==='false'?'selected':''}>无需授信</option>
+      </select>
+      <select id="filter_sort" onchange="poolFilter.sort=this.value;renderPool()">
+        <option value="score_desc" ${poolFilter.sort==='score_desc'?'selected':''}>分数从高到低</option>
+        <option value="score_asc" ${poolFilter.sort==='score_asc'?'selected':''}>分数从低到高</option>
+        <option value="time_desc" ${poolFilter.sort==='time_desc'?'selected':''}>最近评级</option>
+      </select>
+    </div>
+    <table><thead><tr><th>排名</th><th>客商名称</th><th>准入分</th><th>评级</th><th>场景</th><th>授信</th><th>层级</th><th>风控系数</th><th>评级时间</th><th>操作</th></tr></thead><tbody>`;
+  snapshots.forEach((s, idx) => {
+    let m = db.merchants.find(x => x.merchant_id === s.merchant_id);
+    html += `<tr>
+      <td>${idx+1}</td>
+      <td>${m?m.merchant_name:'(已删除)'}</td>
+      <td style="font-weight:700;color:${s.rating!=='UNQUALIFIED'?'var(--green)':'var(--red)'}">${s.total_score}</td>
+      <td>${scoreBadge(s.rating)}</td>
+      <td>${s.scenario==='FIRST'?'首次':'动态'}</td>
+      <td>${creditBadge(s.is_credit_applied)}</td>
+      <td>${m?levelBadge(m.merchant_level||'other'):'-'}</td>
+      <td>${s.risk_coefficient}</td>
+      <td style="font-size:11px;color:var(--muted)">${s.created_at}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="showMerchantDetail(${s.merchant_id})">详情</button>
+        <button class="btn btn-primary btn-sm" onclick="showRatingModal(${s.merchant_id})">重新评级</button>
+      </td>
+    </tr>`;
+  });
+  if (snapshots.length === 0) html += '<tr><td colspan="10" class="empty">客商池暂无数据，请先到客商管理进行评级</td></tr>';
+  html += `</tbody></table></div>`;
+  document.getElementById('view-pool').innerHTML = html;
 }
 
-// --- 初始化 ---
-document.querySelectorAll('.nav-item').forEach(n=>{
-  n.addEventListener('click',()=>navigateTo(n.dataset.view));
+// ======================================================================
+// 导航 & 初始化
+// ======================================================================
+function navigateTo(view) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  let navEl = document.querySelector('[data-view="' + view + '"]');
+  if (navEl) navEl.classList.add('active');
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  let contentEl = document.getElementById('view-' + view);
+  if (contentEl) contentEl.classList.add('active');
+  const titles = {dashboard:'系统看板', merchants:'客商管理', financial:'财务数据', project:'立项质量', performance:'履约质量', pool:'客商池看板'};
+  document.getElementById('pageTitle').textContent = titles[view] || '';
+  const renderers = {dashboard:renderDashboard, merchants:renderMerchants, financial:renderFinancial, project:renderProject, performance:renderPerformance, pool:renderPool};
+  if (renderers[view]) renderers[view]();
+}
+
+document.querySelectorAll('.nav-item').forEach(n => {
+  n.addEventListener('click', () => navigateTo(n.dataset.view));
 });
-document.getElementById('roleSelect').addEventListener('change',e=>{
-  currentUser=e.target.value;
-  navigateTo('dashboard');
-});
-document.getElementById('modal').addEventListener('click',e=>{
-  if(e.target.id==='modal')closeModal();
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
 });
 navigateTo('dashboard');
 </script>
